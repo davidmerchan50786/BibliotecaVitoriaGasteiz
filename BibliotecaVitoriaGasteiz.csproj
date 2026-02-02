@@ -46,9 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="conexion\ConexionDB.cs" />
     <Compile Include="controlador\Controlador.cs" />
     <Compile Include="helpers\RoundedControlHelper.cs" />
-    <Compile Include="modelo\Datos.cs" />
+    <Compile Include="helpers\SQLiteHelper.cs" />
     <Compile Include="modelo\Libro.cs" />
     <Compile Include="modelo\Prestamo.cs" />
     <Compile Include="modelo\Usuario.cs" />
