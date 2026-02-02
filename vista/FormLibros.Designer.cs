@@ -1,4 +1,7 @@
-﻿namespace BibliotecaVitoriaGasteiz.vista
+﻿using System;
+using System.Windows.Forms;
+
+namespace BibliotecaVitoriaGasteiz.vista
 {
     partial class FormLibros
     {
@@ -31,17 +34,17 @@
             this.panelBuscarBorder = new System.Windows.Forms.Panel();
             this.textBoxBuscar = new System.Windows.Forms.TextBox();
             this.panelTitulo = new System.Windows.Forms.Panel();
-            this.labelTitulo = new System.Windows.Forms.Label();
             this.textBoxTitulo = new System.Windows.Forms.TextBox();
+            this.labelTitulo = new System.Windows.Forms.Label();
             this.panelAutor = new System.Windows.Forms.Panel();
-            this.labelAutor = new System.Windows.Forms.Label();
             this.textBoxAutor = new System.Windows.Forms.TextBox();
+            this.labelAutor = new System.Windows.Forms.Label();
             this.panelDescripcion = new System.Windows.Forms.Panel();
-            this.labelDescripcion = new System.Windows.Forms.Label();
             this.textBoxDescripcion = new System.Windows.Forms.TextBox();
+            this.labelDescripcion = new System.Windows.Forms.Label();
             this.panelBotonGuardar = new System.Windows.Forms.Panel();
-            this.pictureBoxGuardar = new System.Windows.Forms.PictureBox();
             this.labelGuardar = new System.Windows.Forms.Label();
+            this.pictureBoxGuardar = new System.Windows.Forms.PictureBox();
             this.panelBuscarBorder.SuspendLayout();
             this.panelTitulo.SuspendLayout();
             this.panelAutor.SuspendLayout();
@@ -85,6 +88,16 @@
             this.panelTitulo.Size = new System.Drawing.Size(430, 80);
             this.panelTitulo.TabIndex = 1;
             // 
+            // textBoxTitulo
+            // 
+            this.textBoxTitulo.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxTitulo.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxTitulo.Location = new System.Drawing.Point(10, 35);
+            this.textBoxTitulo.Name = "textBoxTitulo";
+            this.textBoxTitulo.Size = new System.Drawing.Size(410, 20);
+            this.textBoxTitulo.TabIndex = 1;
+            this.textBoxTitulo.Text = "el señor de los anillos";
+            // 
             // labelTitulo
             // 
             this.labelTitulo.AutoSize = true;
@@ -95,16 +108,6 @@
             this.labelTitulo.Size = new System.Drawing.Size(49, 15);
             this.labelTitulo.TabIndex = 0;
             this.labelTitulo.Text = "TITULO";
-            // 
-            // textBoxTitulo
-            // 
-            this.textBoxTitulo.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxTitulo.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxTitulo.Location = new System.Drawing.Point(10, 35);
-            this.textBoxTitulo.Name = "textBoxTitulo";
-            this.textBoxTitulo.Size = new System.Drawing.Size(410, 20);
-            this.textBoxTitulo.TabIndex = 1;
-            this.textBoxTitulo.Text = "el señor de los anillos";
             // 
             // panelAutor
             // 
@@ -117,6 +120,16 @@
             this.panelAutor.Size = new System.Drawing.Size(430, 80);
             this.panelAutor.TabIndex = 2;
             // 
+            // textBoxAutor
+            // 
+            this.textBoxAutor.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxAutor.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxAutor.Location = new System.Drawing.Point(10, 35);
+            this.textBoxAutor.Name = "textBoxAutor";
+            this.textBoxAutor.Size = new System.Drawing.Size(410, 20);
+            this.textBoxAutor.TabIndex = 1;
+            this.textBoxAutor.Text = "Tolkien";
+            // 
             // labelAutor
             // 
             this.labelAutor.AutoSize = true;
@@ -127,16 +140,6 @@
             this.labelAutor.Size = new System.Drawing.Size(48, 15);
             this.labelAutor.TabIndex = 0;
             this.labelAutor.Text = "AUTOR";
-            // 
-            // textBoxAutor
-            // 
-            this.textBoxAutor.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxAutor.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxAutor.Location = new System.Drawing.Point(10, 35);
-            this.textBoxAutor.Name = "textBoxAutor";
-            this.textBoxAutor.Size = new System.Drawing.Size(410, 20);
-            this.textBoxAutor.TabIndex = 1;
-            this.textBoxAutor.Text = "Tolkien";
             // 
             // panelDescripcion
             // 
@@ -149,17 +152,6 @@
             this.panelDescripcion.Size = new System.Drawing.Size(880, 150);
             this.panelDescripcion.TabIndex = 3;
             // 
-            // labelDescripcion
-            // 
-            this.labelDescripcion.AutoSize = true;
-            this.labelDescripcion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDescripcion.ForeColor = System.Drawing.Color.Black;
-            this.labelDescripcion.Location = new System.Drawing.Point(10, 10);
-            this.labelDescripcion.Name = "labelDescripcion";
-            this.labelDescripcion.Size = new System.Drawing.Size(84, 15);
-            this.labelDescripcion.TabIndex = 0;
-            this.labelDescripcion.Text = "DESCRIPCION";
-            // 
             // textBoxDescripcion
             // 
             this.textBoxDescripcion.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -170,6 +162,18 @@
             this.textBoxDescripcion.Size = new System.Drawing.Size(860, 100);
             this.textBoxDescripcion.TabIndex = 1;
             this.textBoxDescripcion.Text = "escribe descripcion";
+            this.textBoxDescripcion.TextChanged += new System.EventHandler(this.textBoxDescripcion_TextChanged);
+            // 
+            // labelDescripcion
+            // 
+            this.labelDescripcion.AutoSize = true;
+            this.labelDescripcion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelDescripcion.ForeColor = System.Drawing.Color.Black;
+            this.labelDescripcion.Location = new System.Drawing.Point(10, 10);
+            this.labelDescripcion.Name = "labelDescripcion";
+            this.labelDescripcion.Size = new System.Drawing.Size(84, 15);
+            this.labelDescripcion.TabIndex = 0;
+            this.labelDescripcion.Text = "DESCRIPCION";
             // 
             // panelBotonGuardar
             // 
@@ -183,16 +187,6 @@
             this.panelBotonGuardar.Size = new System.Drawing.Size(880, 80);
             this.panelBotonGuardar.TabIndex = 4;
             // 
-            // pictureBoxGuardar
-            // 
-            this.pictureBoxGuardar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
-            this.pictureBoxGuardar.Location = new System.Drawing.Point(380, 15);
-            this.pictureBoxGuardar.Name = "pictureBoxGuardar";
-            this.pictureBoxGuardar.Size = new System.Drawing.Size(50, 50);
-            this.pictureBoxGuardar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxGuardar.TabIndex = 0;
-            this.pictureBoxGuardar.TabStop = false;
-            // 
             // labelGuardar
             // 
             this.labelGuardar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -202,6 +196,16 @@
             this.labelGuardar.TabIndex = 1;
             this.labelGuardar.Text = "Guardar";
             this.labelGuardar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pictureBoxGuardar
+            // 
+            this.pictureBoxGuardar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
+            this.pictureBoxGuardar.Location = new System.Drawing.Point(380, 15);
+            this.pictureBoxGuardar.Name = "pictureBoxGuardar";
+            this.pictureBoxGuardar.Size = new System.Drawing.Size(50, 50);
+            this.pictureBoxGuardar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxGuardar.TabIndex = 0;
+            this.pictureBoxGuardar.TabStop = false;
             // 
             // FormLibros
             // 
@@ -229,6 +233,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGuardar)).EndInit();
             this.ResumeLayout(false);
 
+        }
+
+        private void TextBoxBuscar_TextChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PanelBuscarBorder_Paint(object sender, PaintEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void FormLibros_Load(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

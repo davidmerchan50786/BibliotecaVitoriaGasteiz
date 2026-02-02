@@ -46,11 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="controlador\Controlador.cs" />
+    <Compile Include="helpers\RoundedControlHelper.cs" />
+    <Compile Include="modelo\Datos.cs" />
+    <Compile Include="modelo\Libro.cs" />
+    <Compile Include="modelo\Prestamo.cs" />
+    <Compile Include="modelo\Usuario.cs" />
     <Compile Include="vista\FormLibros.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="vista\FormLibros.Designer.cs">
       <DependentUpon>FormLibros.cs</DependentUpon>
+    </Compile>
+    <Compile Include="vista\FormPrestamos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="vista\FormPrestamos.Designer.cs">
+      <DependentUpon>FormPrestamos.cs</DependentUpon>
     </Compile>
     <Compile Include="vista\FormUsuarios.cs">
       <SubType>Form</SubType>
@@ -78,6 +90,9 @@
     <EmbeddedResource Include="vista\FormLibros.resx">
       <DependentUpon>FormLibros.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="vista\FormPrestamos.resx">
+      <DependentUpon>FormPrestamos.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="vista\FormUsuarios.resx">
       <DependentUpon>FormUsuarios.cs</DependentUpon>
     </EmbeddedResource>
@@ -97,9 +112,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="controlador\" />
-    <Folder Include="modelo\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

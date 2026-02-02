@@ -1,4 +1,6 @@
-﻿namespace BibliotecaVitoriaGasteiz
+﻿using System;
+
+namespace BibliotecaVitoriaGasteiz
 {
     partial class Gestor
     {
@@ -29,11 +31,11 @@
         private void InitializeComponent()
         {
             this.panelHeader = new System.Windows.Forms.Panel();
-            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
-            this.labelAyuntamiento = new System.Windows.Forms.Label();
-            this.labelUsuarios = new System.Windows.Forms.Label();
-            this.labelLibros = new System.Windows.Forms.Label();
             this.labelPrestamos = new System.Windows.Forms.Label();
+            this.labelLibros = new System.Windows.Forms.Label();
+            this.labelUsuarios = new System.Windows.Forms.Label();
+            this.labelAyuntamiento = new System.Windows.Forms.Label();
+            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.SuspendLayout();
@@ -52,41 +54,18 @@
             this.panelHeader.Size = new System.Drawing.Size(984, 80);
             this.panelHeader.TabIndex = 1;
             // 
-            // pictureBoxLogo
+            // labelPrestamos
             // 
-            this.pictureBoxLogo.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBoxLogo.Location = new System.Drawing.Point(20, 15);
-            this.pictureBoxLogo.Name = "pictureBoxLogo";
-            this.pictureBoxLogo.Size = new System.Drawing.Size(50, 50);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxLogo.TabIndex = 0;
-            this.pictureBoxLogo.TabStop = false;
-            // 
-            // labelAyuntamiento
-            // 
-            this.labelAyuntamiento.AutoSize = true;
-            this.labelAyuntamiento.BackColor = System.Drawing.Color.Transparent;
-            this.labelAyuntamiento.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.labelAyuntamiento.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.labelAyuntamiento.ForeColor = System.Drawing.Color.White;
-            this.labelAyuntamiento.Location = new System.Drawing.Point(80, 25);
-            this.labelAyuntamiento.Name = "labelAyuntamiento";
-            this.labelAyuntamiento.Size = new System.Drawing.Size(218, 20);
-            this.labelAyuntamiento.TabIndex = 1;
-            this.labelAyuntamiento.Text = "Ayuntamiento Vitoria-Gasteiz";
-            // 
-            // labelUsuarios
-            // 
-            this.labelUsuarios.BackColor = System.Drawing.Color.Transparent;
-            this.labelUsuarios.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelUsuarios.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.labelUsuarios.ForeColor = System.Drawing.Color.White;
-            this.labelUsuarios.Location = new System.Drawing.Point(520, 30);
-            this.labelUsuarios.Name = "labelUsuarios";
-            this.labelUsuarios.Size = new System.Drawing.Size(80, 25);
-            this.labelUsuarios.TabIndex = 2;
-            this.labelUsuarios.Text = "Usuarios";
-            this.labelUsuarios.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelPrestamos.BackColor = System.Drawing.Color.Transparent;
+            this.labelPrestamos.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelPrestamos.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.labelPrestamos.ForeColor = System.Drawing.Color.White;
+            this.labelPrestamos.Location = new System.Drawing.Point(720, 30);
+            this.labelPrestamos.Name = "labelPrestamos";
+            this.labelPrestamos.Size = new System.Drawing.Size(100, 25);
+            this.labelPrestamos.TabIndex = 4;
+            this.labelPrestamos.Text = "Prestamos";
+            this.labelPrestamos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelLibros
             // 
@@ -101,18 +80,42 @@
             this.labelLibros.Text = "Libros";
             this.labelLibros.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // labelPrestamos
+            // labelUsuarios
             // 
-            this.labelPrestamos.BackColor = System.Drawing.Color.Transparent;
-            this.labelPrestamos.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelPrestamos.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.labelPrestamos.ForeColor = System.Drawing.Color.White;
-            this.labelPrestamos.Location = new System.Drawing.Point(720, 30);
-            this.labelPrestamos.Name = "labelPrestamos";
-            this.labelPrestamos.Size = new System.Drawing.Size(100, 25);
-            this.labelPrestamos.TabIndex = 4;
-            this.labelPrestamos.Text = "Prestamos";
-            this.labelPrestamos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelUsuarios.BackColor = System.Drawing.Color.Transparent;
+            this.labelUsuarios.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelUsuarios.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.labelUsuarios.ForeColor = System.Drawing.Color.White;
+            this.labelUsuarios.Location = new System.Drawing.Point(520, 30);
+            this.labelUsuarios.Name = "labelUsuarios";
+            this.labelUsuarios.Size = new System.Drawing.Size(80, 25);
+            this.labelUsuarios.TabIndex = 2;
+            this.labelUsuarios.Text = "Usuarios";
+            this.labelUsuarios.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelAyuntamiento
+            // 
+            this.labelAyuntamiento.AutoSize = true;
+            this.labelAyuntamiento.BackColor = System.Drawing.Color.Transparent;
+            this.labelAyuntamiento.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.labelAyuntamiento.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.labelAyuntamiento.ForeColor = System.Drawing.Color.White;
+            this.labelAyuntamiento.Location = new System.Drawing.Point(80, 25);
+            this.labelAyuntamiento.Name = "labelAyuntamiento";
+            this.labelAyuntamiento.Size = new System.Drawing.Size(218, 20);
+            this.labelAyuntamiento.TabIndex = 1;
+            this.labelAyuntamiento.Text = "Ayuntamiento Vitoria-Gasteiz";
+            this.labelAyuntamiento.Click += new System.EventHandler(this.labelAyuntamiento_Click);
+            // 
+            // pictureBoxLogo
+            // 
+            this.pictureBoxLogo.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxLogo.Location = new System.Drawing.Point(20, 15);
+            this.pictureBoxLogo.Name = "pictureBoxLogo";
+            this.pictureBoxLogo.Size = new System.Drawing.Size(50, 50);
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLogo.TabIndex = 0;
+            this.pictureBoxLogo.TabStop = false;
             // 
             // Gestor
             // 
@@ -131,6 +134,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.ResumeLayout(false);
 
+        }
+
+        private void labelAyuntamiento_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
