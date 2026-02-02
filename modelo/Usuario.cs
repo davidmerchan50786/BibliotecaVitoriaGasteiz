@@ -1,27 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
-namespace BibliotecaVitoriaGasteiz.modelo
+namespace Proyecto_compartido_biblioteca.modelo
 {
     public class Usuario
     {
+        public Usuario() { }
+
+        public Usuario(string nombre, string apellido1, string apellido2, int telefono)
+        {
+            this.Nombre = nombre;
+            this.Apellido1 = apellido1;
+            this.Apellido2 = apellido2;
+            this.Telefono = telefono;
+        }
+
+        public Usuario(int id, string nombre, string apellido1, string apellido2, int telefono)
+        {
+            this.Id = id;
+            this.Nombre = nombre;
+            this.Apellido1 = apellido1;
+            this.Apellido2 = apellido2;
+            this.Telefono = telefono;
+        }
+
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public string Apellidos { get; set; }
-        public string Email { get; set; }
-        public string Telefono { get; set; }
-        public DateTime FechaRegistro { get; set; }
-        public bool Activo { get; set; }
+        public string Apellido1 { get; set; }
+        public string Apellido2 { get; set; }
+        public int Telefono { get; set; }
 
-        public string NombreCompleto => $"{Nombre} {Apellidos}";
-
-        public Usuario()
-        {
-            FechaRegistro = DateTime.Now;
-            Activo = true;
-        }
+        //para mostrar nombre completo
+        public string NombreCompleto => $"{Nombre} {Apellido1} {Apellido2}".Trim();
     }
 }

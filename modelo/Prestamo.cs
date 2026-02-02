@@ -1,54 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
-
-namespace BibliotecaVitoriaGasteiz.modelo
+namespace Proyecto_compartido_biblioteca.modelo
 {
     public class Prestamo
     {
+        public Prestamo() { }
+
+        public Prestamo(int idLibro, int idUsuario, string fechaInicio, string fechaFin)
+        {
+            this.IdLibro = idLibro;
+            this.IdUsuario = idUsuario;
+            this.FechaInicio = fechaInicio;
+            this.FechaFin = fechaFin;
+        }
+
         public int Id { get; set; }
-        public int LibroId { get; set; }
-        public int UsuarioId { get; set; }
-        public int NumeroEjemplar { get; set; }
-        public DateTime FechaPrestamo { get; set; }
-        public DateTime FechaDevolucionEsperada { get; set; }
-        public DateTime? FechaDevolucionReal { get; set; }
-        public string Estado { get; set; }
+        public int IdLibro { get; set; }
+        public int IdUsuario { get; set; }
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
 
-        // Navegación
-        public Libro Libro { get; set; }
-        public Usuario Usuario { get; set; }
-
-        // Propiedades calculadas
-        public int DiasRetraso
-        {
-            get
-            {
-                if (Estado != "Activo") return 0;
-                return DateTime.Now > FechaDevolucionEsperada
-                    ? (DateTime.Now - FechaDevolucionEsperada).Days
-                    : 0;
-            }
-        }
-
-        public string MensajeAlerta
-        {
-            get
-            {
-                if (Estado != "Activo") return Estado;
-                if (DiasRetraso > 0) return $"Retraso de {DiasRetraso} días";
-                return "En plazo";
-            }
-        }
-
-        public Prestamo()
-        {
-            FechaPrestamo = DateTime.Now;
-            FechaDevolucionEsperada = DateTime.Now.AddDays(14);
-            Estado = "Activo";
-        }
+        //para mostrar en la vista (se llenan con JOIN)
+        public string TituloLibro { get; set; }
+        public string NombreUsuario { get; set; }
     }
 }

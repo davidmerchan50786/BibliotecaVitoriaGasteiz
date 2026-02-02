@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SQLite;
 
-namespace ejercicio03_empresa.modelo
+namespace Proyecto_compartido_biblioteca.modelo
 {
     
 
