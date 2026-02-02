@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Data.SQLite;
 using System.IO;
 
@@ -11,9 +12,9 @@ namespace Biblioteca_BBDD.Conexion
         private static string cadenaConexion = $"Data Source={rutaBD};Version=3;";
 
         // Obtener conexión
-        public static SQLiteConnection ObtenerConexion()
+        public static SqliteConnection ObtenerConexion()
         {
-            return new SQLiteConnection(cadenaConexion);
+            return new SqliteConnection(cadenaConexion);
         }
 
         // Crear la base de datos y las tablas si no existen
@@ -22,10 +23,10 @@ namespace Biblioteca_BBDD.Conexion
             // Si no existe el archivo, se crea automáticamente
             if (!File.Exists(rutaBD))
             {
-                SQLiteConnection.CreateFile(rutaBD);
+                object value = SqliteConnection.CreateFile(rutaBD);
             }
 
-            using (SQLiteConnection conexion = ObtenerConexion())
+            using (SqliteConnection conexion = ObtenerConexion())
             {
                 conexion.Open();
 
@@ -60,7 +61,7 @@ namespace Biblioteca_BBDD.Conexion
                     );
                 ";
 
-                using (SQLiteCommand comando = new SQLiteCommand(crearTablas, conexion))
+                using (SqliteCommand comando = new SqliteCommand(crearTablas, conexion))
                 {
                     comando.ExecuteNonQuery();
                 }
