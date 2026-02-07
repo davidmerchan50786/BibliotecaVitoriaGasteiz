@@ -156,7 +156,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Desktop\Nueva carpeta\BibliotecaVitoriaGasteiz\BibliotecaControles\BibliotecaControles.csproj">
+      <Project>{312514bd-0bb0-47eb-b7e3-0f9d36ad9dcb}</Project>
+      <Name>BibliotecaControles</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
