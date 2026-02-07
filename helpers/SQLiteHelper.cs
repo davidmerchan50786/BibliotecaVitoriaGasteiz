@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SQLite;
 
-namespace ejercicio03_empresa.modelo
+namespace BibliotecaVitoriaGasteiz.modelo
 {
-    
-
     public static class SQLiteHelper
     {
         public static SQLiteConnection Conectar(string bbdd)
@@ -79,5 +77,4 @@ namespace ejercicio03_empresa.modelo
             }
         }
     }
-
 }

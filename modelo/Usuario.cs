@@ -1,6 +1,6 @@
 using System;
 
-namespace Proyecto_compartido_biblioteca.modelo
+namespace BibliotecaVitoriaGasteiz.modelo
 {
     public class Usuario
     {
@@ -29,7 +29,7 @@ namespace Proyecto_compartido_biblioteca.modelo
         public string Apellido2 { get; set; }
         public int Telefono { get; set; }
 
-        //para mostrar nombre completo
+        // Para mostrar nombre completo en vistas
         public string NombreCompleto => $"{Nombre} {Apellido1} {Apellido2}".Trim();
     }
 }

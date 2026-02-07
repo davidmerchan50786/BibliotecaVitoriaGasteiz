@@ -1,6 +1,6 @@
 using System;
 
-namespace Proyecto_compartido_biblioteca.modelo
+namespace BibliotecaVitoriaGasteiz.modelo
 {
     public class Libro
     {

@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using System.Data.SQLite;
 
-namespace Proyecto_compartido_biblioteca.modelo
+namespace BibliotecaVitoriaGasteiz.modelo
 {
     public class RepositorioLibro
     {
@@ -37,35 +37,37 @@ namespace Proyecto_compartido_biblioteca.modelo
 
         public void Eliminar(int id)
         {
-            string sql = $"DELETE FROM Libros WHERE ID={id}";
+            string sql = "DELETE FROM Libros WHERE ID=@id";
             SQLiteCommand cmd = new SQLiteCommand(sql);
+            cmd.Parameters.Add("@id", DbType.Int32).Value = id;
             SQLiteHelper.Ejecuta(Properties.Settings.Default.conexion, cmd);
         }
 
         public DataTable ObtenerTodos()
         {
-            string sql = "SELECT * FROM Libros";
+            string sql = "SELECT * FROM Libros ORDER BY Titulo";
             SQLiteCommand cmd = new SQLiteCommand(sql);
             return SQLiteHelper.GetDataTable(Properties.Settings.Default.conexion, cmd);
         }
 
         public DataTable ObtenerDisponibles()
         {
-            string sql = "SELECT * FROM Libros WHERE Disponible = 1";
+            string sql = "SELECT * FROM Libros WHERE Disponible = 1 ORDER BY Titulo";
             SQLiteCommand cmd = new SQLiteCommand(sql);
             return SQLiteHelper.GetDataTable(Properties.Settings.Default.conexion, cmd);
         }
 
         public DataTable BuscarPorId(int id)
         {
-            string sql = $"SELECT * FROM Libros WHERE ID={id}";
+            string sql = "SELECT * FROM Libros WHERE ID=@id";
             SQLiteCommand cmd = new SQLiteCommand(sql);
+            cmd.Parameters.Add("@id", DbType.Int32).Value = id;
             return SQLiteHelper.GetDataTable(Properties.Settings.Default.conexion, cmd);
         }
 
         public DataTable Buscar(string termino)
         {
-            string sql = "SELECT * FROM Libros WHERE Titulo LIKE @termino OR Escritor LIKE @termino";
+            string sql = "SELECT * FROM Libros WHERE Titulo LIKE @termino OR Escritor LIKE @termino ORDER BY Titulo";
             SQLiteCommand cmd = new SQLiteCommand(sql);
             cmd.Parameters.Add("@termino", DbType.String).Value = "%" + termino + "%";
             return SQLiteHelper.GetDataTable(Properties.Settings.Default.conexion, cmd);
