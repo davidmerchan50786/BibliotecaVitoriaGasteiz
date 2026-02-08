@@ -1,4 +1,4 @@
-﻿using BibliotecaVitoriaGasteiz.controlador;
+using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.vista;
 using System;
 using System.Collections.Generic;
@@ -20,14 +20,10 @@ namespace BibliotecaVitoriaGasteiz
         {
             InitializeComponent();
             ConfigurarEventos();
-            miControlador.CargarDatosIniciales();
         }
 
         private void ConfigurarEventos()
         {
-            // IMPORTANTE: Usar los nombres REALES del diseñador
-            // labelLibros, labelUsuarios, labelPrestamos (NO lblLibros)
-
             // Eventos de navegación
             labelLibros.Click += (s, e) => MostrarLibros();
             labelUsuarios.Click += (s, e) => MostrarUsuarios();
@@ -83,10 +79,10 @@ namespace BibliotecaVitoriaGasteiz
 
         private void InsertarFormulario(Form formulario)
         {
-            // Ocultar el formulario hijo activo actual
-            if (this.ActiveMdiChild != null)
+            // Cerrar formularios hijos anteriores
+            foreach (Form hijo in this.MdiChildren)
             {
-                this.ActiveMdiChild.Hide();
+                hijo.Close();
             }
 
             // Configurar y mostrar el nuevo formulario
@@ -117,5 +113,8 @@ namespace BibliotecaVitoriaGasteiz
                     break;
             }
         }
+
+        // NOTA: labelAyuntamiento_Click está en Gestor.Designer.cs
+        // Por eso NO lo definimos aquí para evitar duplicación
     }
 }

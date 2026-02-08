@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
@@ -15,205 +10,210 @@ namespace BibliotecaVitoriaGasteiz.vista
     public partial class FormUsuarios : Form
     {
         #region Singleton
-
         private static FormUsuarios formulario;
 
         public static FormUsuarios GetInstance()
         {
-            if (formulario == null)
+            if (formulario == null || formulario.IsDisposed)
             {
                 formulario = new FormUsuarios();
             }
             return formulario;
         }
-
         #endregion
 
         public Controlador MiControlador { get; set; }
+        private int usuarioIdSeleccionado = 0;
+        private bool modoEdicion = false;
 
         private FormUsuarios()
         {
             InitializeComponent();
             ConfigurarEventos();
-            ConfigurarPlaceholder();
         }
 
         private void ConfigurarEventos()
         {
-            // Eventos de botones (panels + labels)
-            panelGuardarUsuario.Click += PanelGuardarUsuario_Click;
-            label1.Click += PanelGuardarUsuario_Click; // El label "Guardar"
-
-            panelButtonAnadir.Click += PanelButtonAnadir_Click;
-            labelAnadir.Click += PanelButtonAnadir_Click;
-
-            panelButtonEditar.Click += PanelButtonEditar_Click;
-            labelEditar.Click += PanelButtonEditar_Click;
-
-            panelButtonEliminar.Click += PanelButtonEliminar_Click;
-            labelEliminar.Click += PanelButtonEliminar_Click;
+            // Evento de búsqueda
+            textBoxBuscarUsuario.TextChanged += TextBoxBuscar_TextChanged;
+            
+            // Eventos de botones
+            panelButtonAnadir.Click += BtnGuardar_Click;
+            labelAnadir.Click += BtnGuardar_Click;
+            
+            panelButtonEditar.Click += BtnNuevo_Click;
+            labelEditar.Click += BtnNuevo_Click;
         }
 
-        private void ConfigurarPlaceholder()
+        private void FormUsuarios_Load(object sender, EventArgs e)
         {
-            // Placeholder para el buscador
-            textBoxBuscarUsuario.Enter += (s, e) =>
+            CargarUsuarios();
+        }
+
+        private void TextBoxBuscar_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textBoxBuscarUsuario.Text) ||
+                textBoxBuscarUsuario.Text == "Buscar usuario...")
             {
-                if (textBoxBuscarUsuario.Text == "Buscar usuario...")
-                {
-                    textBoxBuscarUsuario.Text = "";
-                    textBoxBuscarUsuario.ForeColor = Color.White;
-                }
-            };
+                CargarUsuarios();
+                return;
+            }
 
-            textBoxBuscarUsuario.Leave += (s, e) =>
+            try
             {
-                if (string.IsNullOrWhiteSpace(textBoxBuscarUsuario.Text))
-                {
-                    textBoxBuscarUsuario.Text = "Buscar usuario...";
-                    textBoxBuscarUsuario.ForeColor = Color.Gray;
-                }
-            };
+                DataTable dt = MiControlador.BuscarUsuarios(textBoxBuscarUsuario.Text);
+                MostrarUsuariosEnGrid(dt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        #region Eventos del diseñador (para evitar errores de compilación)
-
-        // Estos métodos pueden estar registrados en el diseñador
-        // Se incluyen para evitar errores de compilación
-
-        private void textBoxBuscarUsuario_TextChanged(object sender, EventArgs e)
-        {
-            // Funcionalidad de búsqueda (opcional)
-            // Puedes implementar filtrado de usuarios aquí
-        }
-
-        private void labelPanelApellidos_Click(object sender, EventArgs e)
-        {
-            // Evento de clic en label (opcional)
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            // Este evento llama al método principal de guardar
-            PanelGuardarUsuario_Click(sender, e);
-        }
-
-        private void labelAnadir_Click(object sender, EventArgs e)
-        {
-            // Este evento llama al método principal de añadir
-            PanelButtonAnadir_Click(sender, e);
-        }
-
-        private void labelEditar_Click(object sender, EventArgs e)
-        {
-            // Este evento llama al método principal de editar
-            PanelButtonEditar_Click(sender, e);
-        }
-
-        private void labelEliminar_Click(object sender, EventArgs e)
-        {
-            // Este evento llama al método principal de eliminar
-            PanelButtonEliminar_Click(sender, e);
-        }
-
-        #endregion
-
-        #region Métodos de funcionalidad
-
-        private void PanelGuardarUsuario_Click(object sender, EventArgs e)
+        private void BtnGuardar_Click(object sender, EventArgs e)
         {
             try
             {
-                string nombre = textBoxNombre.Text.Trim();
-                string apellidos = textBoxApellidos.Text.Trim();
-                string email = textBoxCorreo.Text.Trim();
-
-                // Validaciones
-                if (string.IsNullOrEmpty(nombre))
+                // Validar nombre
+                if (string.IsNullOrWhiteSpace(textBoxNombre.Text))
                 {
-                    MessageBox.Show("El nombre es obligatorio", "Error",
+                    MessageBox.Show("El nombre es obligatorio", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     textBoxNombre.Focus();
                     return;
                 }
 
-                if (string.IsNullOrEmpty(email))
+                // Validar apellido1
+                if (string.IsNullOrWhiteSpace(textBoxApellido1.Text))
                 {
-                    MessageBox.Show("El correo electrónico es obligatorio", "Error",
+                    MessageBox.Show("El primer apellido es obligatorio", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxCorreo.Focus();
+                    textBoxApellido1.Focus();
                     return;
                 }
 
-                // Validar formato de email básico
-                if (!email.Contains("@") || !email.Contains("."))
+                // Validar teléfono
+                if (string.IsNullOrWhiteSpace(textBoxTelefono.Text))
                 {
-                    MessageBox.Show("El formato del correo electrónico no es válido", "Error",
+                    MessageBox.Show("El teléfono es obligatorio", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxCorreo.Focus();
+                    textBoxTelefono.Focus();
                     return;
                 }
 
-                // Crear usuario
+                if (!int.TryParse(textBoxTelefono.Text, out int telefono))
+                {
+                    MessageBox.Show("El teléfono debe ser un número", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxTelefono.Focus();
+                    return;
+                }
+
+                if (textBoxTelefono.Text.Length != 9)
+                {
+                    MessageBox.Show("El teléfono debe tener 9 dígitos", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxTelefono.Focus();
+                    return;
+                }
+
+                // Crear objeto Usuario
                 var usuario = new Usuario
                 {
-                    Id = Datos.Usuarios.Count + 1,
-                    Nombre = nombre,
-                    Apellidos = apellidos,
-                    Email = email,
-                    Telefono = "", // Puedes agregar un campo si lo necesitas
-                    FechaRegistro = DateTime.Now,
-                    Activo = true
+                    Nombre = textBoxNombre.Text.Trim(),
+                    Apellido1 = textBoxApellido1.Text.Trim(),
+                    Apellido2 = textBoxApellido2.Text.Trim(),
+                    Telefono = telefono
                 };
 
-                // Guardar en la lista
-                Datos.Usuarios.Add(usuario);
-
-                MessageBox.Show($"Usuario '{usuario.NombreCompleto}' guardado correctamente", "Éxito",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (modoEdicion)
+                {
+                    usuario.Id = usuarioIdSeleccionado;
+                    MiControlador.ModificarUsuario(usuario);
+                    MessageBox.Show("Usuario modificado correctamente", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MiControlador.InsertarUsuario(usuario);
+                    MessageBox.Show("Usuario guardado correctamente", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
 
                 LimpiarCampos();
+                CargarUsuarios();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar usuario: {ex.Message}", "Error",
+                MessageBox.Show($"Error al guardar: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void PanelButtonAnadir_Click(object sender, EventArgs e)
+        private void BtnNuevo_Click(object sender, EventArgs e)
         {
-            // Preparar formulario para añadir nuevo usuario
             LimpiarCampos();
-            textBoxNombre.Focus();
-
-            MessageBox.Show("Rellena los campos para añadir un nuevo usuario", "Añadir Usuario",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void PanelButtonEditar_Click(object sender, EventArgs e)
+        private void CargarUsuarios()
         {
-            // Funcionalidad de editar (por implementar)
-            MessageBox.Show("Funcionalidad de edición pendiente de implementar", "Información",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                DataTable dt = MiControlador.ObtenerUsuarios();
+                MostrarUsuariosEnGrid(dt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar usuarios: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void PanelButtonEliminar_Click(object sender, EventArgs e)
+        private void MostrarUsuariosEnGrid(DataTable dt)
         {
-            // Funcionalidad de eliminar (por implementar)
-            MessageBox.Show("Funcionalidad de eliminación pendiente de implementar", "Información",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            dataGridViewUsuarios.DataSource = dt;
+
+            if (dataGridViewUsuarios.Columns.Count > 0)
+            {
+                dataGridViewUsuarios.Columns["ID"].HeaderText = "ID";
+                dataGridViewUsuarios.Columns["ID"].Width = 50;
+                dataGridViewUsuarios.Columns["Nombre"].HeaderText = "Nombre";
+                dataGridViewUsuarios.Columns["Nombre"].Width = 120;
+                dataGridViewUsuarios.Columns["Apellido_1"].HeaderText = "Primer Apellido";
+                dataGridViewUsuarios.Columns["Apellido_1"].Width = 120;
+                dataGridViewUsuarios.Columns["Apellido_2"].HeaderText = "Segundo Apellido";
+                dataGridViewUsuarios.Columns["Apellido_2"].Width = 120;
+                dataGridViewUsuarios.Columns["Telefono"].HeaderText = "Teléfono";
+                dataGridViewUsuarios.Columns["Telefono"].Width = 100;
+            }
         }
 
         private void LimpiarCampos()
         {
             textBoxNombre.Clear();
-            textBoxApellidos.Clear();
-            textBoxCorreo.Clear();
+            textBoxApellido1.Clear();
+            textBoxApellido2.Clear();
+            textBoxTelefono.Clear();
             textBoxBuscarUsuario.Text = "Buscar usuario...";
-            textBoxBuscarUsuario.ForeColor = Color.Gray;
+
+            modoEdicion = false;
+            usuarioIdSeleccionado = 0;
+            labelAnadir.Text = "Añadir";
+
+            textBoxNombre.Focus();
         }
 
-        #endregion
+        private void textBoxBuscarUsuario_TextChanged(object sender, EventArgs e)
+        {
+            // Evento del designer (llama al real)
+            TextBoxBuscar_TextChanged(sender, e);
+        }
+
+        private void labelAnadir_Click(object sender, EventArgs e)
+        {
+            // Evento del designer (llama al real)
+            BtnGuardar_Click(sender, e);
+        }
     }
 }

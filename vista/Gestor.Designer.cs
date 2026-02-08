@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace BibliotecaVitoriaGasteiz
 {
@@ -138,7 +138,7 @@ namespace BibliotecaVitoriaGasteiz
 
         private void labelAyuntamiento_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            // Evento vacío - puede usarse para mostrar información del ayuntamiento
         }
 
         #endregion
@@ -151,4 +151,3 @@ namespace BibliotecaVitoriaGasteiz
         private System.Windows.Forms.Label labelPrestamos;
     }
 }
-

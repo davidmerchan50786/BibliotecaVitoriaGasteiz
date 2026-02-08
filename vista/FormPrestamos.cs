@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
@@ -15,18 +10,16 @@ namespace BibliotecaVitoriaGasteiz.vista
     public partial class FormPrestamos : Form
     {
         #region Singleton
-
         private static FormPrestamos formulario;
 
         public static FormPrestamos GetInstance()
         {
-            if (formulario == null)
+            if (formulario == null || formulario.IsDisposed)
             {
                 formulario = new FormPrestamos();
             }
             return formulario;
         }
-
         #endregion
 
         public Controlador MiControlador { get; set; }
@@ -35,56 +28,94 @@ namespace BibliotecaVitoriaGasteiz.vista
         {
             InitializeComponent();
             ConfigurarEventos();
-            this.VisibleChanged += FormPrestamos_VisibleChanged;
         }
 
         private void ConfigurarEventos()
         {
-            // Aquí puedes agregar eventos adicionales si es necesario
+            panelButtonPrestar.Click += BtnPrestar_Click;
+            labelPrestar.Click += BtnPrestar_Click;
+            
+            panelButtonDevolver.Click += BtnDevolver_Click;
+            labelDevolver.Click += BtnDevolver_Click;
         }
 
-        private void FormPrestamos_VisibleChanged(object sender, EventArgs e)
+        private void FormPrestamos_Load(object sender, EventArgs e)
         {
-            // Cargar datos cuando el formulario se hace visible
-            if (this.Visible)
-            {
-                CargarPrestamos();
-            }
+            CargarComboUsuarios();
+            CargarComboLibros();
+            CargarPrestamosActivos();
         }
 
-        private void CargarPrestamos()
+        private void CargarComboUsuarios()
         {
             try
             {
-                // Limpiar el DataGridView
-                dataGridViewPrestamos.Rows.Clear();
-
-                // Verificar si hay datos
-                if (Datos.Prestamos == null || Datos.Prestamos.Count == 0)
+                DataTable dt = MiControlador.ObtenerUsuarios();
+                
+                comboBoxUsuarios.DataSource = dt;
+                comboBoxUsuarios.DisplayMember = "Nombre";
+                comboBoxUsuarios.ValueMember = "ID";
+                
+                if (comboBoxUsuarios.Items.Count > 0)
                 {
-                    return;
+                    comboBoxUsuarios.SelectedIndex = -1;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar usuarios: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-                // Cargar préstamos desde Datos
-                foreach (var prestamo in Datos.Prestamos)
+        private void CargarComboLibros()
+        {
+            try
+            {
+                // Solo libros disponibles
+                DataTable dt = MiControlador.ObtenerLibrosDisponibles();
+                
+                comboBoxLibros.DataSource = dt;
+                comboBoxLibros.DisplayMember = "Titulo";
+                comboBoxLibros.ValueMember = "ID";
+                
+                if (comboBoxLibros.Items.Count > 0)
                 {
-                    dataGridViewPrestamos.Rows.Add(
-                        prestamo.Libro?.Titulo ?? "N/A",
-                        prestamo.Libro?.ISBN ?? "N/A",
-                        prestamo.NumeroEjemplar,
-                        prestamo.FechaPrestamo.ToString("dd/MM/yyyy"),
-                        prestamo.FechaDevolucionEsperada.ToString("dd/MM/yyyy"),
-                        prestamo.Usuario?.NombreCompleto ?? "N/A",
-                        prestamo.MensajeAlerta
-                    );
+                    comboBoxLibros.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar libros: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-                    // Colorear filas con retraso en rojo
-                    if (prestamo.DiasRetraso > 0)
-                    {
-                        int lastRowIndex = dataGridViewPrestamos.Rows.Count - 1;
-                        dataGridViewPrestamos.Rows[lastRowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 220);
-                        dataGridViewPrestamos.Rows[lastRowIndex].DefaultCellStyle.ForeColor = Color.DarkRed;
-                    }
+        private void CargarPrestamosActivos()
+        {
+            try
+            {
+                DataTable dt = MiControlador.ObtenerPrestamosActivos();
+                dataGridViewPrestamos.DataSource = dt;
+
+                if (dataGridViewPrestamos.Columns.Count > 0)
+                {
+                    dataGridViewPrestamos.Columns["ID"].HeaderText = "ID";
+                    dataGridViewPrestamos.Columns["ID"].Width = 50;
+                    dataGridViewPrestamos.Columns["TituloLibro"].HeaderText = "Libro";
+                    dataGridViewPrestamos.Columns["TituloLibro"].Width = 200;
+                    dataGridViewPrestamos.Columns["NombreUsuario"].HeaderText = "Usuario";
+                    dataGridViewPrestamos.Columns["NombreUsuario"].Width = 200;
+                    dataGridViewPrestamos.Columns["Fecha_Inicio"].HeaderText = "Fecha Inicio";
+                    dataGridViewPrestamos.Columns["Fecha_Inicio"].Width = 100;
+                    dataGridViewPrestamos.Columns["Fecha_Fin"].HeaderText = "Fecha Fin";
+                    dataGridViewPrestamos.Columns["Fecha_Fin"].Width = 100;
+
+                    // Ocultar columnas ID_Libro e ID_Usuario
+                    if (dataGridViewPrestamos.Columns.Contains("ID_Libro"))
+                        dataGridViewPrestamos.Columns["ID_Libro"].Visible = false;
+                    if (dataGridViewPrestamos.Columns.Contains("ID_Usuario"))
+                        dataGridViewPrestamos.Columns["ID_Usuario"].Visible = false;
                 }
             }
             catch (Exception ex)
@@ -94,12 +125,100 @@ namespace BibliotecaVitoriaGasteiz.vista
             }
         }
 
-        // Este método se incluye para evitar el error de compilación
-        // Si el diseñador tiene un evento registrado, no dará error
-        private void dataGridViewPrestamos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void BtnPrestar_Click(object sender, EventArgs e)
         {
-            // Este método puede quedar vacío o puedes agregar funcionalidad aquí
-            // Por ejemplo, mostrar detalles del préstamo seleccionado
+            try
+            {
+                // Validar selección de usuario
+                if (comboBoxUsuarios.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Seleccione un usuario", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Validar selección de libro
+                if (comboBoxLibros.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Seleccione un libro", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Crear préstamo
+                var prestamo = new Prestamo
+                {
+                    IdLibro = Convert.ToInt32(comboBoxLibros.SelectedValue),
+                    IdUsuario = Convert.ToInt32(comboBoxUsuarios.SelectedValue),
+                    FechaInicio = dateTimePickerInicio.Value.ToString("dd/MM/yyyy"),
+                    FechaFin = dateTimePickerFin.Value.ToString("dd/MM/yyyy")
+                };
+
+                // Validar que fecha fin sea posterior a fecha inicio
+                if (dateTimePickerFin.Value <= dateTimePickerInicio.Value)
+                {
+                    MessageBox.Show("La fecha de fin debe ser posterior a la fecha de inicio", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                MiControlador.RealizarPrestamo(prestamo);
+
+                MessageBox.Show("Préstamo realizado correctamente", "Éxito",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Limpiar y recargar
+                comboBoxUsuarios.SelectedIndex = -1;
+                comboBoxLibros.SelectedIndex = -1;
+                dateTimePickerInicio.Value = DateTime.Now;
+                dateTimePickerFin.Value = DateTime.Now.AddDays(30);
+
+                CargarComboLibros(); // Recargar libros disponibles
+                CargarPrestamosActivos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al realizar préstamo: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void BtnDevolver_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPrestamos.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Seleccione un préstamo para devolver", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                int idPrestamo = Convert.ToInt32(dataGridViewPrestamos.SelectedRows[0].Cells["ID"].Value);
+                string tituloLibro = dataGridViewPrestamos.SelectedRows[0].Cells["TituloLibro"].Value.ToString();
+
+                DialogResult result = MessageBox.Show(
+                    $"¿Confirmar devolución del libro '{tituloLibro}'?",
+                    "Confirmar devolución",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    MiControlador.DevolverLibro(idPrestamo);
+
+                    MessageBox.Show("Libro devuelto correctamente", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    CargarComboLibros(); // Recargar libros disponibles
+                    CargarPrestamosActivos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al devolver libro: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

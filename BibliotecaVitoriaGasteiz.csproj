@@ -35,18 +35,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x86|AnyCPU'">
+    <OutputPath>bin\x86\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Data.Sqlite, Version=10.0.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Data.Sqlite.Core.10.0.2\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCLRaw.core, Version=2.1.11.2622, Culture=neutral, PublicKeyToken=1488e028ca7ab535, processorArchitecture=MSIL">
-      <HintPath>packages\SQLitePCLRaw.core.2.1.11\lib\netstandard2.0\SQLitePCLRaw.core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -56,12 +53,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=2.0.2.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>packages\System.Data.SQLite.2.0.2\lib\net471\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=2.0.2.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>packages\System.Data.SQLite.EF6.2.0.2\lib\net471\System.Data.SQLite.EF6.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>packages\System.Data.SQLite.Linq.1.0.119.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
@@ -85,7 +76,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="conexion\ConexionDB.cs" />
     <Compile Include="controlador\Controlador.cs" />
     <Compile Include="controlador\LibroControlador.cs" />
     <Compile Include="controlador\PrestamoControlador.cs" />
@@ -98,6 +88,12 @@
     <Compile Include="modelo\RepoPrestamo.cs" />
     <Compile Include="modelo\RepoUsuario.cs" />
     <Compile Include="modelo\Usuario.cs" />
+    <Compile Include="vista\FormDetalleLibro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="vista\FormDetalleLibro.Designer.cs">
+      <DependentUpon>FormDetalleLibro.cs</DependentUpon>
+    </Compile>
     <Compile Include="vista\FormLibros.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,14 +112,14 @@
     <Compile Include="vista\FormUsuarios.Designer.cs">
       <DependentUpon>FormUsuarios.cs</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="vista\Gestor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="vista\Gestor.Designer.cs">
       <DependentUpon>Gestor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -142,6 +138,9 @@
     <EmbeddedResource Include="vista\FormUsuarios.resx">
       <DependentUpon>FormUsuarios.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="Biblioteca.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="vista\Gestor.resx">
       <DependentUpon>Gestor.cs</DependentUpon>
     </EmbeddedResource>
@@ -174,4 +173,15 @@
     <Error Condition="!Exists('packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
   </Target>
   <Import Project="packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+<PropertyGroup>
+  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+</PropertyGroup>
+
+<Target Name="CopySQLiteInterop" AfterTargets="Build">
+  <ItemGroup>
+    <SQLiteInteropFiles Include="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.Core.*\build\net472\x86\SQLite.Interop.dll" />
+    <SQLiteInteropFiles Include="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.Core.*\build\net472\x64\SQLite.Interop.dll" />
+  </ItemGroup>
+  <Copy SourceFiles="@(SQLiteInteropFiles)" DestinationFolder="$(TargetDir)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+</Target>
 </Project>

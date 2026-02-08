@@ -1,35 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
+using BibliotecaControles;
 
 namespace BibliotecaVitoriaGasteiz.vista
 {
     public partial class FormLibros : Form
     {
         #region Singleton
-
         private static FormLibros formulario;
 
         public static FormLibros GetInstance()
         {
-            if (formulario == null)
+            if (formulario == null || formulario.IsDisposed)
             {
                 formulario = new FormLibros();
             }
             return formulario;
         }
-
         #endregion
 
         public Controlador MiControlador { get; set; }
+        private int libroIdSeleccionado = 0;
+        private bool modoEdicion = false;
 
         private FormLibros()
         {
@@ -40,14 +36,20 @@ namespace BibliotecaVitoriaGasteiz.vista
 
         private void ConfigurarEventos()
         {
-            // Eventos de botón guardar (panel + label)
+            // Eventos de botón guardar
             panelBotonGuardar.Click += BtnGuardar_Click;
             labelGuardar.Click += BtnGuardar_Click;
+
+            // Eventos de botones adicionales
+            panelBotonNuevo.Click += BtnNuevo_Click;
+            labelNuevo.Click += BtnNuevo_Click;
+
+            // Evento de búsqueda
+            textBoxBuscar.TextChanged += TextBoxBuscar_TextChanged_Real;
         }
 
         private void ConfigurarPlaceholder()
         {
-            // Placeholder para el buscador
             textBoxBuscar.Enter += (s, e) =>
             {
                 if (textBoxBuscar.Text == "Buscar Libro ...")
@@ -67,89 +69,208 @@ namespace BibliotecaVitoriaGasteiz.vista
             };
         }
 
-        #region Eventos del diseñador (para evitar errores de compilación)
-
-        // Estos eventos están registrados en el diseñador
-        // Se incluyen para evitar errores de compilación
+        #region Eventos del Designer (para evitar errores)
 
         private void FormLibros_Load(object sender, EventArgs e)
         {
-            // Evento Load del formulario
-            // Puedes agregar inicialización aquí si es necesario
+            CargarLibros();
         }
 
         private void panelBuscarBorder_Paint(object sender, PaintEventArgs e)
         {
-            // Evento Paint del panel
-            // Puedes agregar dibujo personalizado aquí si es necesario
+            // Evento Paint vacío
         }
 
         private void textBoxBuscar_TextChanged(object sender, EventArgs e)
         {
-            // Funcionalidad de búsqueda (opcional)
-            // Puedes implementar filtrado de libros aquí
-            if (textBoxBuscar.Text == "Buscar Libro ..." || string.IsNullOrWhiteSpace(textBoxBuscar.Text))
-            {
-                return;
-            }
+            // Evento vacío - la funcionalidad real está en TextBoxBuscar_TextChanged_Real
+        }
 
-            // Aquí podrías implementar búsqueda en tiempo real
-            // Por ejemplo, filtrar Datos.Libros por título o autor
+        private void textBoxDescripcion_TextChanged(object sender, EventArgs e)
+        {
+            // Evento vacío
         }
 
         #endregion
 
         #region Métodos de funcionalidad
 
+        private void TextBoxBuscar_TextChanged_Real(object sender, EventArgs e)
+        {
+            if (textBoxBuscar.Text == "Buscar Libro ..." ||
+                string.IsNullOrWhiteSpace(textBoxBuscar.Text))
+            {
+                CargarLibros();
+                return;
+            }
+
+            try
+            {
+                DataTable dt = MiControlador.BuscarLibros(textBoxBuscar.Text);
+                MostrarLibrosEnPanel(dt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             try
             {
-                string titulo = textBoxTitulo.Text.Trim();
-                string autor = textBoxAutor.Text.Trim();
-                string descripcion = textBoxDescripcion.Text.Trim();
-
-                // Validaciones
-                if (string.IsNullOrEmpty(titulo))
+                // Validar título
+                if (string.IsNullOrWhiteSpace(textBoxTitulo.Text))
                 {
-                    MessageBox.Show("El título es obligatorio", "Error",
+                    MessageBox.Show("El título es obligatorio", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     textBoxTitulo.Focus();
                     return;
                 }
 
-                if (string.IsNullOrEmpty(autor))
+                // Validar escritor
+                if (string.IsNullOrWhiteSpace(textBoxEscritor.Text))
                 {
-                    MessageBox.Show("El autor es obligatorio", "Error",
+                    MessageBox.Show("El escritor es obligatorio", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxAutor.Focus();
+                    textBoxEscritor.Focus();
                     return;
                 }
 
-                // Crear libro
+                // Validar año (opcional pero si hay texto debe ser número válido)
+                int? anoEdicion = null;
+                if (!string.IsNullOrWhiteSpace(textBoxAnoEdicion.Text))
+                {
+                    if (int.TryParse(textBoxAnoEdicion.Text, out int ano))
+                    {
+                        if (ano < 1 || ano > DateTime.Now.Year + 1)
+                        {
+                            MessageBox.Show("El año de edición no es válido", "Validación",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            textBoxAnoEdicion.Focus();
+                            return;
+                        }
+                        anoEdicion = ano;
+                    }
+                    else
+                    {
+                        MessageBox.Show("El año debe ser un número", "Validación",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        textBoxAnoEdicion.Focus();
+                        return;
+                    }
+                }
+
+                // Crear objeto Libro con los campos de la BD
                 var libro = new Libro
                 {
-                    Id = Datos.Libros.Count + 1,
-                    Titulo = titulo,
-                    Autor = autor,
-                    ISBN = GenerarISBN(), // Generar ISBN automático
-                    Descripcion = descripcion,
-                    Disponible = true,
-                    NumeroEjemplares = 1,
-                    EjemplaresDisponibles = 1
+                    Titulo = textBoxTitulo.Text.Trim(),
+                    Escritor = textBoxEscritor.Text.Trim(),
+                    AnoEdicion = anoEdicion,
+                    Sinopsis = textBoxSinopsis.Text.Trim(),
+                    Disponible = true
                 };
 
-                // Guardar en la lista
-                Datos.Libros.Add(libro);
-
-                MessageBox.Show($"Libro '{libro.Titulo}' guardado correctamente\nISBN: {libro.ISBN}", "Éxito",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (modoEdicion)
+                {
+                    libro.Id = libroIdSeleccionado;
+                    MiControlador.ModificarLibro(libro);
+                    MessageBox.Show("Libro modificado correctamente", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MiControlador.InsertarLibro(libro);
+                    MessageBox.Show("Libro guardado correctamente", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
 
                 LimpiarCampos();
+                CargarLibros();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar libro: {ex.Message}", "Error",
+                MessageBox.Show($"Error al guardar: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void BtnNuevo_Click(object sender, EventArgs e)
+        {
+            LimpiarCampos();
+        }
+
+        private void CargarLibros()
+        {
+            try
+            {
+                DataTable dt = MiControlador.ObtenerLibros();
+                MostrarLibrosEnPanel(dt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar libros: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void MostrarLibrosEnPanel(DataTable dt)
+        {
+            // Limpiar panel de libros
+            flowLayoutPanelLibros.Controls.Clear();
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                Label lblVacio = new Label
+                {
+                    Text = "No se encontraron libros",
+                    AutoSize = true,
+                    Font = new Font("Segoe UI", 12F, FontStyle.Italic),
+                    ForeColor = Color.Gray,
+                    Padding = new Padding(20)
+                };
+                flowLayoutPanelLibros.Controls.Add(lblVacio);
+                return;
+            }
+
+            // Crear tarjetas de libros
+            foreach (DataRow row in dt.Rows)
+            {
+                TarjetaLibro tarjeta = new TarjetaLibro
+                {
+                    Id = Convert.ToInt32(row["ID"]),
+                    Titulo = row["Titulo"].ToString(),
+                    Escritor = row["Escritor"].ToString(),
+                    Disponible = Convert.ToBoolean(row["Disponible"]),
+                    Margin = new Padding(10)
+                };
+
+                // Suscribirse al evento de ver detalles
+                tarjeta.verDetalles += Tarjeta_VerDetalles;
+
+                flowLayoutPanelLibros.Controls.Add(tarjeta);
+            }
+        }
+
+        private void Tarjeta_VerDetalles(object sender, VerDetallesLibroEventArgs e)
+        {
+            try
+            {
+                // Abrir formulario de detalles
+                FormDetalleLibro formDetalle = new FormDetalleLibro();
+                formDetalle.MiControlador = MiControlador;
+                formDetalle.LibroId = e.Id;
+                formDetalle.LibroModificado += (s, args) =>
+                {
+                    CargarLibros(); // Recargar lista cuando se modifique
+                };
+
+                formDetalle.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al abrir detalles: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -157,19 +278,17 @@ namespace BibliotecaVitoriaGasteiz.vista
         private void LimpiarCampos()
         {
             textBoxTitulo.Clear();
-            textBoxAutor.Clear();
-            textBoxDescripcion.Clear();
+            textBoxEscritor.Clear();
+            textBoxAnoEdicion.Clear();
+            textBoxSinopsis.Clear();
             textBoxBuscar.Text = "Buscar Libro ...";
             textBoxBuscar.ForeColor = Color.Gray;
-            textBoxTitulo.Focus();
-        }
 
-        private string GenerarISBN()
-        {
-            // Generar un ISBN-13 simple para demostración
-            // Formato: 978-84-XXXX-XXX-X
-            Random random = new Random();
-            return $"978-84-{random.Next(1000, 9999)}-{random.Next(100, 999)}-{random.Next(0, 9)}";
+            modoEdicion = false;
+            libroIdSeleccionado = 0;
+            labelGuardar.Text = "Guardar";
+
+            textBoxTitulo.Focus();
         }
 
         #endregion
