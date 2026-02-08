@@ -94,6 +94,9 @@
     <Compile Include="helpers\SQLiteHelper.cs" />
     <Compile Include="modelo\Libro.cs" />
     <Compile Include="modelo\Prestamo.cs" />
+    <Compile Include="modelo\RepoLibro.cs" />
+    <Compile Include="modelo\RepoPrestamo.cs" />
+    <Compile Include="modelo\RepoUsuario.cs" />
     <Compile Include="modelo\Usuario.cs" />
     <Compile Include="vista\FormLibros.cs">
       <SubType>Form</SubType>
