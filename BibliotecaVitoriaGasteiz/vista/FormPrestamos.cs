@@ -3,63 +3,67 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
-using BibliotecaVitoriaGasteiz.modelo;
 
 namespace BibliotecaVitoriaGasteiz.vista
 {
     public partial class FormPrestamos : Form
     {
-        #region Singleton
-        private static FormPrestamos formulario;
+        private static FormPrestamos instancia;
+        public Controlador MiControlador { get; set; }
 
         public static FormPrestamos GetInstance()
         {
-            if (formulario == null || formulario.IsDisposed)
+            if (instancia == null || instancia.IsDisposed)
             {
-                formulario = new FormPrestamos();
+                instancia = new FormPrestamos();
             }
-            return formulario;
+            return instancia;
         }
-        #endregion
-
-        public Controlador MiControlador { get; set; }
 
         private FormPrestamos()
         {
             InitializeComponent();
-            ConfigurarEventos();
-        }
 
-        private void ConfigurarEventos()
-        {
-            panelButtonPrestar.Click += BtnPrestar_Click;
-            labelPrestar.Click += BtnPrestar_Click;
-            
+            // ⭐ CONECTAR EVENTOS DE LOS BOTONES
+            panelButtonPrestar.Click += BtnRealizarPrestamo_Click;
+            labelPrestar.Click += BtnRealizarPrestamo_Click;
+
             panelButtonDevolver.Click += BtnDevolver_Click;
             labelDevolver.Click += BtnDevolver_Click;
         }
 
         private void FormPrestamos_Load(object sender, EventArgs e)
         {
-            CargarComboUsuarios();
-            CargarComboLibros();
-            CargarPrestamosActivos();
+            // Solo inicializar fechas, NO cargar datos aquí
+            // Los datos se cargarán en OnVisibleChanged
+            try
+            {
+                dateTimePickerInicio.Value = DateTime.Now;
+                dateTimePickerFin.Value = DateTime.Now.AddDays(14);
+            }
+            catch
+            {
+                // Ignorar si hay error con los DateTimePickers
+            }
         }
 
-        private void CargarComboUsuarios()
+        private void CargarUsuarios()
         {
             try
             {
-                DataTable dt = MiControlador.ObtenerUsuarios();
-                
+                // ⭐ VERIFICAR que MiControlador no sea null
+                if (MiControlador == null) return;
+
+                DataTable dt = MiControlador.ObtenerTodosUsuarios();
+
+                comboBoxUsuarios.DataSource = null;
+                comboBoxUsuarios.Items.Clear();
+
                 comboBoxUsuarios.DataSource = dt;
                 comboBoxUsuarios.DisplayMember = "Nombre";
                 comboBoxUsuarios.ValueMember = "ID";
-                
-                if (comboBoxUsuarios.Items.Count > 0)
-                {
-                    comboBoxUsuarios.SelectedIndex = -1;
-                }
+
+                comboBoxUsuarios.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
@@ -68,21 +72,23 @@ namespace BibliotecaVitoriaGasteiz.vista
             }
         }
 
-        private void CargarComboLibros()
+        private void CargarLibrosDisponibles()
         {
             try
             {
-                // Solo libros disponibles
+                // ⭐ VERIFICAR que MiControlador no sea null
+                if (MiControlador == null) return;
+
                 DataTable dt = MiControlador.ObtenerLibrosDisponibles();
-                
+
+                comboBoxLibros.DataSource = null;
+                comboBoxLibros.Items.Clear();
+
                 comboBoxLibros.DataSource = dt;
                 comboBoxLibros.DisplayMember = "Titulo";
                 comboBoxLibros.ValueMember = "ID";
-                
-                if (comboBoxLibros.Items.Count > 0)
-                {
-                    comboBoxLibros.SelectedIndex = -1;
-                }
+
+                comboBoxLibros.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
@@ -95,28 +101,55 @@ namespace BibliotecaVitoriaGasteiz.vista
         {
             try
             {
+                // ⭐ VERIFICAR que MiControlador no sea null
+                if (MiControlador == null) return;
+
                 DataTable dt = MiControlador.ObtenerPrestamosActivos();
+
                 dataGridViewPrestamos.DataSource = dt;
 
+                // ⭐ USAR LOS NOMBRES REALES DE LAS COLUMNAS DE LA BD
                 if (dataGridViewPrestamos.Columns.Count > 0)
                 {
-                    dataGridViewPrestamos.Columns["ID"].HeaderText = "ID";
-                    dataGridViewPrestamos.Columns["ID"].Width = 50;
-                    dataGridViewPrestamos.Columns["TituloLibro"].HeaderText = "Libro";
-                    dataGridViewPrestamos.Columns["TituloLibro"].Width = 200;
-                    dataGridViewPrestamos.Columns["NombreUsuario"].HeaderText = "Usuario";
-                    dataGridViewPrestamos.Columns["NombreUsuario"].Width = 200;
-                    dataGridViewPrestamos.Columns["Fecha_Inicio"].HeaderText = "Fecha Inicio";
-                    dataGridViewPrestamos.Columns["Fecha_Inicio"].Width = 100;
-                    dataGridViewPrestamos.Columns["Fecha_Fin"].HeaderText = "Fecha Fin";
-                    dataGridViewPrestamos.Columns["Fecha_Fin"].Width = 100;
+                    // Configurar solo las columnas que existen
+                    if (dataGridViewPrestamos.Columns.Contains("ID"))
+                    {
+                        dataGridViewPrestamos.Columns["ID"].HeaderText = "ID Préstamo";
+                        dataGridViewPrestamos.Columns["ID"].Width = 80;
+                    }
 
-                    // Ocultar columnas ID_Libro e ID_Usuario
-                    if (dataGridViewPrestamos.Columns.Contains("ID_Libro"))
-                        dataGridViewPrestamos.Columns["ID_Libro"].Visible = false;
+                    if (dataGridViewPrestamos.Columns.Contains("NombreUsuario"))
+                    {
+                        dataGridViewPrestamos.Columns["NombreUsuario"].HeaderText = "Usuario";
+                        dataGridViewPrestamos.Columns["NombreUsuario"].Width = 150;
+                    }
+
+                    if (dataGridViewPrestamos.Columns.Contains("TituloLibro"))
+                    {
+                        dataGridViewPrestamos.Columns["TituloLibro"].HeaderText = "Libro";
+                        dataGridViewPrestamos.Columns["TituloLibro"].Width = 200;
+                    }
+
+                    if (dataGridViewPrestamos.Columns.Contains("Fecha_Inicio"))
+                    {
+                        dataGridViewPrestamos.Columns["Fecha_Inicio"].HeaderText = "Fecha Inicio";
+                        dataGridViewPrestamos.Columns["Fecha_Inicio"].Width = 100;
+                    }
+
+                    if (dataGridViewPrestamos.Columns.Contains("Fecha_Fin"))
+                    {
+                        dataGridViewPrestamos.Columns["Fecha_Fin"].HeaderText = "Fecha Fin";
+                        dataGridViewPrestamos.Columns["Fecha_Fin"].Width = 100;
+                    }
+
+                    // Ocultar columnas de IDs internos si existen
                     if (dataGridViewPrestamos.Columns.Contains("ID_Usuario"))
                         dataGridViewPrestamos.Columns["ID_Usuario"].Visible = false;
+                    if (dataGridViewPrestamos.Columns.Contains("ID_Libro"))
+                        dataGridViewPrestamos.Columns["ID_Libro"].Visible = false;
                 }
+
+                dataGridViewPrestamos.ClearSelection();
             }
             catch (Exception ex)
             {
@@ -125,56 +158,70 @@ namespace BibliotecaVitoriaGasteiz.vista
             }
         }
 
-        private void BtnPrestar_Click(object sender, EventArgs e)
+        private void BtnRealizarPrestamo_Click(object sender, EventArgs e)
         {
             try
             {
-                // Validar selección de usuario
-                if (comboBoxUsuarios.SelectedIndex == -1)
+                // ⭐ VERIFICAR que MiControlador no sea null
+                if (MiControlador == null)
                 {
-                    MessageBox.Show("Seleccione un usuario", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Error: Controlador no inicializado", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // Validar selección de libro
-                if (comboBoxLibros.SelectedIndex == -1)
+                if (comboBoxUsuarios.SelectedIndex == -1 || comboBoxUsuarios.SelectedValue == null)
                 {
-                    MessageBox.Show("Seleccione un libro", "Validación",
+                    MessageBox.Show("Por favor, seleccione un usuario", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    comboBoxUsuarios.Focus();
                     return;
                 }
 
-                // Crear préstamo
-                var prestamo = new Prestamo
+                if (comboBoxLibros.SelectedIndex == -1 || comboBoxLibros.SelectedValue == null)
                 {
-                    IdLibro = Convert.ToInt32(comboBoxLibros.SelectedValue),
-                    IdUsuario = Convert.ToInt32(comboBoxUsuarios.SelectedValue),
-                    FechaInicio = dateTimePickerInicio.Value.ToString("dd/MM/yyyy"),
-                    FechaFin = dateTimePickerFin.Value.ToString("dd/MM/yyyy")
-                };
+                    MessageBox.Show("Por favor, seleccione un libro", "Validación",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    comboBoxLibros.Focus();
+                    return;
+                }
 
-                // Validar que fecha fin sea posterior a fecha inicio
-                if (dateTimePickerFin.Value <= dateTimePickerInicio.Value)
+                int idUsuario = Convert.ToInt32(comboBoxUsuarios.SelectedValue);
+                int idLibro = Convert.ToInt32(comboBoxLibros.SelectedValue);
+
+                if (idUsuario <= 0)
+                {
+                    MessageBox.Show("ID de usuario no válido", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (idLibro <= 0)
+                {
+                    MessageBox.Show("ID de libro no válido", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                DateTime fechaInicio = dateTimePickerInicio.Value.Date;
+                DateTime fechaFin = dateTimePickerFin.Value.Date;
+
+                if (fechaFin <= fechaInicio)
                 {
                     MessageBox.Show("La fecha de fin debe ser posterior a la fecha de inicio", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    dateTimePickerFin.Focus();
                     return;
                 }
 
-                MiControlador.RealizarPrestamo(prestamo);
+                MiControlador.RealizarPrestamo(idUsuario, idLibro, fechaInicio, fechaFin);
 
                 MessageBox.Show("Préstamo realizado correctamente", "Éxito",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Limpiar y recargar
-                comboBoxUsuarios.SelectedIndex = -1;
-                comboBoxLibros.SelectedIndex = -1;
-                dateTimePickerInicio.Value = DateTime.Now;
-                dateTimePickerFin.Value = DateTime.Now.AddDays(30);
-
-                CargarComboLibros(); // Recargar libros disponibles
+                CargarLibrosDisponibles();
                 CargarPrestamosActivos();
+                LimpiarFormulario();
             }
             catch (Exception ex)
             {
@@ -187,18 +234,25 @@ namespace BibliotecaVitoriaGasteiz.vista
         {
             try
             {
+                // ⭐ VERIFICAR que MiControlador no sea null
+                if (MiControlador == null)
+                {
+                    MessageBox.Show("Error: Controlador no inicializado", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 if (dataGridViewPrestamos.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Seleccione un préstamo para devolver", "Validación",
+                    MessageBox.Show("Por favor, seleccione un préstamo para devolver", "Validación",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 int idPrestamo = Convert.ToInt32(dataGridViewPrestamos.SelectedRows[0].Cells["ID"].Value);
-                string tituloLibro = dataGridViewPrestamos.SelectedRows[0].Cells["TituloLibro"].Value.ToString();
 
                 DialogResult result = MessageBox.Show(
-                    $"¿Confirmar devolución del libro '{tituloLibro}'?",
+                    "¿Está seguro de que desea marcar este libro como devuelto?",
                     "Confirmar devolución",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
@@ -210,7 +264,7 @@ namespace BibliotecaVitoriaGasteiz.vista
                     MessageBox.Show("Libro devuelto correctamente", "Éxito",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    CargarComboLibros(); // Recargar libros disponibles
+                    CargarLibrosDisponibles();
                     CargarPrestamosActivos();
                 }
             }
@@ -218,6 +272,32 @@ namespace BibliotecaVitoriaGasteiz.vista
             {
                 MessageBox.Show($"Error al devolver libro: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LimpiarFormulario()
+        {
+            comboBoxUsuarios.SelectedIndex = -1;
+            comboBoxLibros.SelectedIndex = -1;
+            dateTimePickerInicio.Value = DateTime.Now;
+            dateTimePickerFin.Value = DateTime.Now.AddDays(14);
+        }
+
+        private void TextBoxBuscar_TextChanged(object sender, EventArgs e)
+        {
+            // Filtro opcional
+        }
+
+        //Método para recargar datos cuando se muestra el formulario
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+
+            if (this.Visible && MiControlador != null)
+            {
+                CargarUsuarios();
+                CargarLibrosDisponibles();
+                CargarPrestamosActivos();
             }
         }
     }

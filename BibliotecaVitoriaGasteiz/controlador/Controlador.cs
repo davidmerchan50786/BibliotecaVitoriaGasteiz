@@ -6,6 +6,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
 {
     /// <summary>
     /// Controlador principal que agrupa todos los controladores del sistema
+    /// Siguiendo el patrón MVC del profesor
     /// </summary>
     public class Controlador
     {
@@ -86,6 +87,11 @@ namespace BibliotecaVitoriaGasteiz.controlador
             return usuarioControlador.ObtenerTodos();
         }
 
+        public DataTable ObtenerTodosUsuarios()
+        {
+            return usuarioControlador.ObtenerTodos();
+        }
+
         public DataTable BuscarUsuarioPorId(int id)
         {
             return usuarioControlador.BuscarPorId(id);
@@ -107,6 +113,18 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         public void RealizarPrestamo(Prestamo prestamo)
         {
+            prestamoControlador.RealizarPrestamo(prestamo);
+        }
+
+        public void RealizarPrestamo(int idUsuario, int idLibro, DateTime fechaInicio, DateTime fechaFin)
+        {
+            Prestamo prestamo = new Prestamo
+            {
+                IdUsuario = idUsuario,
+                IdLibro = idLibro,
+                FechaInicio = fechaInicio.ToString("dd/MM/yyyy"),
+                FechaFin = fechaFin.ToString("dd/MM/yyyy")
+            };
             prestamoControlador.RealizarPrestamo(prestamo);
         }
 

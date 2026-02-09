@@ -1,5 +1,6 @@
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.vista;
+using BibliotecaVitoriaGasteiz.helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,10 @@ namespace BibliotecaVitoriaGasteiz
         public Gestor()
         {
             InitializeComponent();
+
+            // ⭐ CORREGIR IDs INVÁLIDOS AL INICIO
+            DatabaseHelper.CorregirIDsInvalidos();
+
             ConfigurarEventos();
         }
 
@@ -118,17 +123,17 @@ namespace BibliotecaVitoriaGasteiz
 
         private void usuariosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MostrarUsuarios(); 
+            MostrarUsuarios();
         }
 
         private void librosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MostrarLibros(); 
+            MostrarLibros();
         }
 
         private void prestamosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MostrarPrestamos(); 
+            MostrarPrestamos();
         }
 
         // NOTA: labelAyuntamiento_Click está en Gestor.Designer.cs

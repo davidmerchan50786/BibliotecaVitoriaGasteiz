@@ -50,8 +50,8 @@ namespace BibliotecaVitoriaGasteiz.modelo
                             p.ID_Usuario, 
                             p.Fecha_Inicio, 
                             p.Fecha_Fin,
-                            l.Titulo AS TituloLibro,
-                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS NombreUsuario
+                            l.Titulo AS Libro,
+                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS Usuario
                           FROM Prestamos p
                           INNER JOIN Libros l ON p.ID_Libro = l.ID
                           INNER JOIN Usuarios u ON p.ID_Usuario = u.ID
@@ -62,15 +62,15 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         public DataTable ObtenerActivos()
         {
-            // Préstamos activos: fecha fin es futura o vacía
+            // Préstamos activos: libros que están prestados (Disponible = 0)
             string sql = @"SELECT 
                             p.ID, 
                             p.ID_Libro, 
                             p.ID_Usuario, 
                             p.Fecha_Inicio, 
                             p.Fecha_Fin,
-                            l.Titulo AS TituloLibro,
-                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS NombreUsuario
+                            l.Titulo AS Libro,
+                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS Usuario
                           FROM Prestamos p
                           INNER JOIN Libros l ON p.ID_Libro = l.ID
                           INNER JOIN Usuarios u ON p.ID_Usuario = u.ID
@@ -88,8 +88,8 @@ namespace BibliotecaVitoriaGasteiz.modelo
                             p.ID_Usuario, 
                             p.Fecha_Inicio, 
                             p.Fecha_Fin,
-                            l.Titulo AS TituloLibro,
-                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS NombreUsuario
+                            l.Titulo AS Libro,
+                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS Usuario
                           FROM Prestamos p
                           INNER JOIN Libros l ON p.ID_Libro = l.ID
                           INNER JOIN Usuarios u ON p.ID_Usuario = u.ID
@@ -107,8 +107,8 @@ namespace BibliotecaVitoriaGasteiz.modelo
                             p.ID_Usuario, 
                             p.Fecha_Inicio, 
                             p.Fecha_Fin,
-                            l.Titulo AS TituloLibro,
-                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS NombreUsuario
+                            l.Titulo AS Libro,
+                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS Usuario
                           FROM Prestamos p
                           INNER JOIN Libros l ON p.ID_Libro = l.ID
                           INNER JOIN Usuarios u ON p.ID_Usuario = u.ID
@@ -127,8 +127,8 @@ namespace BibliotecaVitoriaGasteiz.modelo
                             p.ID_Usuario, 
                             p.Fecha_Inicio, 
                             p.Fecha_Fin,
-                            l.Titulo AS TituloLibro,
-                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS NombreUsuario
+                            l.Titulo AS Libro,
+                            (u.Nombre || ' ' || u.Apellido_1 || ' ' || COALESCE(u.Apellido_2, '')) AS Usuario
                           FROM Prestamos p
                           INNER JOIN Libros l ON p.ID_Libro = l.ID
                           INNER JOIN Usuarios u ON p.ID_Usuario = u.ID

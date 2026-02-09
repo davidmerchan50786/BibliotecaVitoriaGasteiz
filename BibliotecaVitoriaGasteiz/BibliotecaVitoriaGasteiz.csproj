@@ -80,6 +80,7 @@
     <Compile Include="controlador\LibroControlador.cs" />
     <Compile Include="controlador\PrestamoControlador.cs" />
     <Compile Include="controlador\UsuarioControlador.cs" />
+    <Compile Include="helpers\DatabaseHelper.cs" />
     <Compile Include="modelo\Libro.cs" />
     <Compile Include="modelo\Prestamo.cs" />
     <Compile Include="modelo\RepoLibro.cs" />
@@ -171,9 +172,7 @@
       <Name>Biblioteca_BBDD</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
