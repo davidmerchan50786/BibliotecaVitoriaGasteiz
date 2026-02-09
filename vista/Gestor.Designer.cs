@@ -41,6 +41,7 @@ namespace BibliotecaVitoriaGasteiz
             this.usuariosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.librosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.prestamosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelLineaSeparacion = new System.Windows.Forms.Panel();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.menuStripBarra.SuspendLayout();
@@ -55,7 +56,7 @@ namespace BibliotecaVitoriaGasteiz
             this.panelHeader.Controls.Add(this.labelAyuntamiento);
             this.panelHeader.Controls.Add(this.pictureBoxLogo);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelHeader.Location = new System.Drawing.Point(0, 27);
+            this.panelHeader.Location = new System.Drawing.Point(0, 29);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Size = new System.Drawing.Size(984, 80);
             this.panelHeader.TabIndex = 1;
@@ -115,11 +116,12 @@ namespace BibliotecaVitoriaGasteiz
             // 
             // pictureBoxLogo
             // 
-            this.pictureBoxLogo.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxLogo.BackColor = System.Drawing.Color.Black;
+            this.pictureBoxLogo.Image = global::BibliotecaVitoriaGasteiz.Properties.Resources.logo_biblio;
             this.pictureBoxLogo.Location = new System.Drawing.Point(20, 15);
             this.pictureBoxLogo.Name = "pictureBoxLogo";
             this.pictureBoxLogo.Size = new System.Drawing.Size(50, 50);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxLogo.TabIndex = 0;
             this.pictureBoxLogo.TabStop = false;
             // 
@@ -175,6 +177,15 @@ namespace BibliotecaVitoriaGasteiz
             this.prestamosToolStripMenuItem.Text = "Prestamos";
             this.prestamosToolStripMenuItem.Click += new System.EventHandler(this.prestamosToolStripMenuItem_Click);
             // 
+            // panelLineaSeparacion
+            // 
+            this.panelLineaSeparacion.BackColor = System.Drawing.Color.White;
+            this.panelLineaSeparacion.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelLineaSeparacion.Location = new System.Drawing.Point(0, 27);
+            this.panelLineaSeparacion.Name = "panelLineaSeparacion";
+            this.panelLineaSeparacion.Size = new System.Drawing.Size(984, 2);
+            this.panelLineaSeparacion.TabIndex = 8;
+            // 
             // Gestor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,6 +193,7 @@ namespace BibliotecaVitoriaGasteiz
             this.BackColor = System.Drawing.Color.LightGray;
             this.ClientSize = new System.Drawing.Size(984, 661);
             this.Controls.Add(this.panelHeader);
+            this.Controls.Add(this.panelLineaSeparacion);
             this.Controls.Add(this.menuStripBarra);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.IsMdiContainer = true;
@@ -216,5 +228,6 @@ namespace BibliotecaVitoriaGasteiz
         private System.Windows.Forms.ToolStripMenuItem usuariosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem librosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem prestamosToolStripMenuItem;
+        private System.Windows.Forms.Panel panelLineaSeparacion;
     }
 }

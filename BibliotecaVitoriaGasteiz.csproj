@@ -119,6 +119,7 @@
     <Compile Include="vista\Gestor.Designer.cs">
       <DependentUpon>Gestor.cs</DependentUpon>
     </Compile>
+    <None Include="Resources\logo_biblio.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -127,6 +128,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="vista\FormDetalleLibro.resx">
       <DependentUpon>FormDetalleLibro.cs</DependentUpon>

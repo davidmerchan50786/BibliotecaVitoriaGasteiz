@@ -51,7 +51,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // panelBuscarBorder
             // 
-            this.panelBuscarBorder.BackColor = System.Drawing.Color.Lime;
+            this.panelBuscarBorder.BackColor = System.Drawing.Color.DarkCyan;
             this.panelBuscarBorder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelBuscarBorder.Controls.Add(this.textBoxBuscar);
             this.panelBuscarBorder.Location = new System.Drawing.Point(50, 12);
@@ -65,7 +65,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.textBoxBuscar.BackColor = System.Drawing.Color.Black;
             this.textBoxBuscar.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxBuscar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxBuscar.ForeColor = System.Drawing.Color.Gray;
+            this.textBoxBuscar.ForeColor = System.Drawing.Color.Transparent;
             this.textBoxBuscar.Location = new System.Drawing.Point(18, 21);
             this.textBoxBuscar.Name = "textBoxBuscar";
             this.textBoxBuscar.Size = new System.Drawing.Size(850, 22);
@@ -131,7 +131,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelEscritor.ForeColor = System.Drawing.Color.Black;
             this.labelEscritor.Location = new System.Drawing.Point(10, 10);
             this.labelEscritor.Name = "labelEscritor";
-            this.labelEscritor.Size = new System.Drawing.Size(68, 15);
+            this.labelEscritor.Size = new System.Drawing.Size(63, 15);
             this.labelEscritor.TabIndex = 0;
             this.labelEscritor.Text = "ESCRITOR";
             // 
@@ -163,7 +163,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelAnoEdicion.ForeColor = System.Drawing.Color.Black;
             this.labelAnoEdicion.Location = new System.Drawing.Point(10, 10);
             this.labelAnoEdicion.Name = "labelAnoEdicion";
-            this.labelAnoEdicion.Size = new System.Drawing.Size(122, 15);
+            this.labelAnoEdicion.Size = new System.Drawing.Size(117, 15);
             this.labelAnoEdicion.TabIndex = 0;
             this.labelAnoEdicion.Text = "AÑO EDICIÓN (Opc)";
             // 
@@ -197,7 +197,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelSinopsis.ForeColor = System.Drawing.Color.Black;
             this.labelSinopsis.Location = new System.Drawing.Point(10, 10);
             this.labelSinopsis.Name = "labelSinopsis";
-            this.labelSinopsis.Size = new System.Drawing.Size(109, 15);
+            this.labelSinopsis.Size = new System.Drawing.Size(94, 15);
             this.labelSinopsis.TabIndex = 0;
             this.labelSinopsis.Text = "SINOPSIS (Opc)";
             // 
@@ -264,7 +264,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelListaLibros.ForeColor = System.Drawing.Color.Black;
             this.labelListaLibros.Location = new System.Drawing.Point(50, 385);
             this.labelListaLibros.Name = "labelListaLibros";
-            this.labelListaLibros.Size = new System.Drawing.Size(115, 20);
+            this.labelListaLibros.Size = new System.Drawing.Size(110, 20);
             this.labelListaLibros.TabIndex = 8;
             this.labelListaLibros.Text = "Lista de Libros";
             // 
@@ -301,6 +301,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelBotonNuevo.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
