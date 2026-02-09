@@ -36,8 +36,14 @@ namespace BibliotecaVitoriaGasteiz
             this.labelUsuarios = new System.Windows.Forms.Label();
             this.labelAyuntamiento = new System.Windows.Forms.Label();
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
+            this.menuStripBarra = new System.Windows.Forms.MenuStrip();
+            this.navegacionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.usuariosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.librosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.prestamosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
+            this.menuStripBarra.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelHeader
@@ -49,7 +55,7 @@ namespace BibliotecaVitoriaGasteiz
             this.panelHeader.Controls.Add(this.labelAyuntamiento);
             this.panelHeader.Controls.Add(this.pictureBoxLogo);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelHeader.Location = new System.Drawing.Point(0, 0);
+            this.panelHeader.Location = new System.Drawing.Point(0, 27);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Size = new System.Drawing.Size(984, 80);
             this.panelHeader.TabIndex = 1;
@@ -117,6 +123,58 @@ namespace BibliotecaVitoriaGasteiz
             this.pictureBoxLogo.TabIndex = 0;
             this.pictureBoxLogo.TabStop = false;
             // 
+            // menuStripBarra
+            // 
+            this.menuStripBarra.BackColor = System.Drawing.Color.Black;
+            this.menuStripBarra.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.menuStripBarra.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.navegacionToolStripMenuItem});
+            this.menuStripBarra.Location = new System.Drawing.Point(0, 0);
+            this.menuStripBarra.Name = "menuStripBarra";
+            this.menuStripBarra.Size = new System.Drawing.Size(984, 27);
+            this.menuStripBarra.TabIndex = 6;
+            this.menuStripBarra.Text = "menuStrip1";
+            // 
+            // navegacionToolStripMenuItem
+            // 
+            this.navegacionToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.navegacionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.usuariosToolStripMenuItem,
+            this.librosToolStripMenuItem,
+            this.prestamosToolStripMenuItem});
+            this.navegacionToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.navegacionToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.navegacionToolStripMenuItem.Name = "navegacionToolStripMenuItem";
+            this.navegacionToolStripMenuItem.Size = new System.Drawing.Size(92, 23);
+            this.navegacionToolStripMenuItem.Text = "Navegacion";
+            // 
+            // usuariosToolStripMenuItem
+            // 
+            this.usuariosToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.usuariosToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.usuariosToolStripMenuItem.Name = "usuariosToolStripMenuItem";
+            this.usuariosToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.usuariosToolStripMenuItem.Text = "Usuarios";
+            this.usuariosToolStripMenuItem.Click += new System.EventHandler(this.usuariosToolStripMenuItem_Click);
+            // 
+            // librosToolStripMenuItem
+            // 
+            this.librosToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.librosToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.librosToolStripMenuItem.Name = "librosToolStripMenuItem";
+            this.librosToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.librosToolStripMenuItem.Text = "Libros";
+            this.librosToolStripMenuItem.Click += new System.EventHandler(this.librosToolStripMenuItem_Click);
+            // 
+            // prestamosToolStripMenuItem
+            // 
+            this.prestamosToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.prestamosToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.prestamosToolStripMenuItem.Name = "prestamosToolStripMenuItem";
+            this.prestamosToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.prestamosToolStripMenuItem.Text = "Prestamos";
+            this.prestamosToolStripMenuItem.Click += new System.EventHandler(this.prestamosToolStripMenuItem_Click);
+            // 
             // Gestor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -124,6 +182,7 @@ namespace BibliotecaVitoriaGasteiz
             this.BackColor = System.Drawing.Color.LightGray;
             this.ClientSize = new System.Drawing.Size(984, 661);
             this.Controls.Add(this.panelHeader);
+            this.Controls.Add(this.menuStripBarra);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.IsMdiContainer = true;
             this.Name = "Gestor";
@@ -132,7 +191,10 @@ namespace BibliotecaVitoriaGasteiz
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
+            this.menuStripBarra.ResumeLayout(false);
+            this.menuStripBarra.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -149,5 +211,10 @@ namespace BibliotecaVitoriaGasteiz
         private System.Windows.Forms.Label labelUsuarios;
         private System.Windows.Forms.Label labelLibros;
         private System.Windows.Forms.Label labelPrestamos;
+        private System.Windows.Forms.MenuStrip menuStripBarra;
+        private System.Windows.Forms.ToolStripMenuItem navegacionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem usuariosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem librosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem prestamosToolStripMenuItem;
     }
 }

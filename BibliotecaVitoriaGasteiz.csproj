@@ -81,7 +81,6 @@
     <Compile Include="controlador\PrestamoControlador.cs" />
     <Compile Include="controlador\UsuarioControlador.cs" />
     <Compile Include="helpers\RoundedControlHelper.cs" />
-    <Compile Include="helpers\SQLiteHelper.cs" />
     <Compile Include="modelo\Libro.cs" />
     <Compile Include="modelo\Prestamo.cs" />
     <Compile Include="modelo\RepoLibro.cs" />
@@ -129,6 +128,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="vista\FormDetalleLibro.resx">
+      <DependentUpon>FormDetalleLibro.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="vista\FormLibros.resx">
       <DependentUpon>FormLibros.cs</DependentUpon>
     </EmbeddedResource>
@@ -162,6 +164,10 @@
     <ProjectReference Include="..\..\..\Desktop\Nueva carpeta\BibliotecaVitoriaGasteiz\BibliotecaControles\BibliotecaControles.csproj">
       <Project>{312514bd-0bb0-47eb-b7e3-0f9d36ad9dcb}</Project>
       <Name>BibliotecaControles</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Biblioteca_BBDD\Biblioteca_BBDD.csproj">
+      <Project>{c9ea55c1-3c8d-40db-adea-498e37e4a847}</Project>
+      <Name>Biblioteca_BBDD</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

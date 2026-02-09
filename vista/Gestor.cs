@@ -24,12 +24,12 @@ namespace BibliotecaVitoriaGasteiz
 
         private void ConfigurarEventos()
         {
-            // Eventos de navegación
+            // Eventos de navegación (Labels antiguos)
             labelLibros.Click += (s, e) => MostrarLibros();
             labelUsuarios.Click += (s, e) => MostrarUsuarios();
             labelPrestamos.Click += (s, e) => MostrarPrestamos();
 
-            // Hover effects
+            // Hover effects (Labels antiguos)
             ConfigurarHoverMenu(labelLibros);
             ConfigurarHoverMenu(labelUsuarios);
             ConfigurarHoverMenu(labelPrestamos);
@@ -112,6 +112,23 @@ namespace BibliotecaVitoriaGasteiz
                     labelPrestamos.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
                     break;
             }
+        }
+
+        // --- EVENTOS DEL MENU BARRA ARRIBA ---
+
+        private void usuariosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MostrarUsuarios(); 
+        }
+
+        private void librosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MostrarLibros(); 
+        }
+
+        private void prestamosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MostrarPrestamos(); 
         }
 
         // NOTA: labelAyuntamiento_Click está en Gestor.Designer.cs
