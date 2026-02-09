@@ -130,7 +130,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelPanelNombre.ForeColor = System.Drawing.Color.Black;
             this.labelPanelNombre.Location = new System.Drawing.Point(10, 10);
             this.labelPanelNombre.Name = "labelPanelNombre";
-            this.labelPanelNombre.Size = new System.Drawing.Size(57, 15);
+            this.labelPanelNombre.Size = new System.Drawing.Size(58, 15);
             this.labelPanelNombre.TabIndex = 0;
             this.labelPanelNombre.Text = "NOMBRE";
             // 
@@ -161,7 +161,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelPanelApellido1.ForeColor = System.Drawing.Color.Black;
             this.labelPanelApellido1.Location = new System.Drawing.Point(10, 10);
             this.labelPanelApellido1.Name = "labelPanelApellido1";
-            this.labelPanelApellido1.Size = new System.Drawing.Size(117, 15);
+            this.labelPanelApellido1.Size = new System.Drawing.Size(109, 15);
             this.labelPanelApellido1.TabIndex = 0;
             this.labelPanelApellido1.Text = "PRIMER APELLIDO";
             // 
@@ -192,7 +192,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelPanelApellido2.ForeColor = System.Drawing.Color.Black;
             this.labelPanelApellido2.Location = new System.Drawing.Point(10, 10);
             this.labelPanelApellido2.Name = "labelPanelApellido2";
-            this.labelPanelApellido2.Size = new System.Drawing.Size(191, 15);
+            this.labelPanelApellido2.Size = new System.Drawing.Size(182, 15);
             this.labelPanelApellido2.TabIndex = 0;
             this.labelPanelApellido2.Text = "SEGUNDO APELLIDO (Opcional)";
             // 
@@ -224,7 +224,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelPanelTelefono.ForeColor = System.Drawing.Color.Black;
             this.labelPanelTelefono.Location = new System.Drawing.Point(10, 10);
             this.labelPanelTelefono.Name = "labelPanelTelefono";
-            this.labelPanelTelefono.Size = new System.Drawing.Size(70, 15);
+            this.labelPanelTelefono.Size = new System.Drawing.Size(65, 15);
             this.labelPanelTelefono.TabIndex = 0;
             this.labelPanelTelefono.Text = "TELÉFONO";
             // 
@@ -246,6 +246,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.LightGray;
             this.ClientSize = new System.Drawing.Size(984, 700);
             this.Controls.Add(this.dataGridViewUsuarios);
@@ -273,6 +274,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewUsuarios)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

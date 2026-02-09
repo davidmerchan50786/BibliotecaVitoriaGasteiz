@@ -6,7 +6,6 @@ namespace BibliotecaVitoriaGasteiz.controlador
 {
     /// <summary>
     /// Controlador principal que agrupa todos los controladores del sistema
-    /// Siguiendo el patrón MVC
     /// </summary>
     public class Controlador
     {

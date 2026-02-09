@@ -80,7 +80,6 @@
     <Compile Include="controlador\LibroControlador.cs" />
     <Compile Include="controlador\PrestamoControlador.cs" />
     <Compile Include="controlador\UsuarioControlador.cs" />
-    <Compile Include="helpers\RoundedControlHelper.cs" />
     <Compile Include="modelo\Libro.cs" />
     <Compile Include="modelo\Prestamo.cs" />
     <Compile Include="modelo\RepoLibro.cs" />
@@ -171,6 +170,9 @@
       <Project>{c9ea55c1-3c8d-40db-adea-498e37e4a847}</Project>
       <Name>Biblioteca_BBDD</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

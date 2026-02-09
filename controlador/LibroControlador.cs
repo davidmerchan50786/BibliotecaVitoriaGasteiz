@@ -15,7 +15,6 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         public void Insertar(Libro libro)
         {
-            // Validaciones de negocio
             if (string.IsNullOrWhiteSpace(libro.Titulo))
                 throw new Exception("El título es obligatorio");
 
@@ -33,7 +32,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         public void Modificar(Libro libro)
         {
-            if (libro.Id <= 0)
+            if (libro.Id < 0)
                 throw new Exception("ID de libro no válido");
 
             if (string.IsNullOrWhiteSpace(libro.Titulo))
@@ -53,11 +52,8 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         public void Eliminar(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 throw new Exception("ID de libro no válido");
-
-            // Verificar si el libro tiene préstamos activos
-            // (esto se podría mejorar con una consulta a la tabla de préstamos)
 
             repo.Eliminar(id);
         }
@@ -74,7 +70,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         public DataTable BuscarPorId(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 throw new Exception("ID de libro no válido");
 
             return repo.BuscarPorId(id);
@@ -90,7 +86,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         public void CambiarDisponibilidad(int id, bool disponible)
         {
-            if (id <= 0)
+            if (id < 0)
                 throw new Exception("ID de libro no válido");
 
             repo.CambiarDisponibilidad(id, disponible);

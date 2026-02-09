@@ -43,7 +43,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.labelTitulo.Location = new System.Drawing.Point(60, 30);
             this.labelTitulo.Name = "labelTitulo";
-            this.labelTitulo.Size = new System.Drawing.Size(184, 25);
+            this.labelTitulo.Size = new System.Drawing.Size(170, 25);
             this.labelTitulo.TabIndex = 0;
             this.labelTitulo.Text = "Realizar Préstamo";
             // 
@@ -63,7 +63,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelUsuario.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.labelUsuario.Location = new System.Drawing.Point(60, 75);
             this.labelUsuario.Name = "labelUsuario";
-            this.labelUsuario.Size = new System.Drawing.Size(62, 19);
+            this.labelUsuario.Size = new System.Drawing.Size(60, 19);
             this.labelUsuario.TabIndex = 2;
             this.labelUsuario.Text = "Usuario";
             // 
@@ -83,7 +83,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelLibro.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.labelLibro.Location = new System.Drawing.Point(500, 75);
             this.labelLibro.Name = "labelLibro";
-            this.labelLibro.Size = new System.Drawing.Size(127, 19);
+            this.labelLibro.Size = new System.Drawing.Size(129, 19);
             this.labelLibro.TabIndex = 4;
             this.labelLibro.Text = "Libro (Disponible)";
             // 
@@ -102,7 +102,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelFechaInicio.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.labelFechaInicio.Location = new System.Drawing.Point(60, 145);
             this.labelFechaInicio.Name = "labelFechaInicio";
-            this.labelFechaInicio.Size = new System.Drawing.Size(92, 19);
+            this.labelFechaInicio.Size = new System.Drawing.Size(87, 19);
             this.labelFechaInicio.TabIndex = 6;
             this.labelFechaInicio.Text = "Fecha Inicio";
             // 
@@ -121,7 +121,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelFechaFin.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.labelFechaFin.Location = new System.Drawing.Point(280, 145);
             this.labelFechaFin.Name = "labelFechaFin";
-            this.labelFechaFin.Size = new System.Drawing.Size(73, 19);
+            this.labelFechaFin.Size = new System.Drawing.Size(70, 19);
             this.labelFechaFin.TabIndex = 8;
             this.labelFechaFin.Text = "Fecha Fin";
             // 
@@ -167,7 +167,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelPrestamosActivos.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.labelPrestamosActivos.Location = new System.Drawing.Point(60, 295);
             this.labelPrestamosActivos.Name = "labelPrestamosActivos";
-            this.labelPrestamosActivos.Size = new System.Drawing.Size(158, 21);
+            this.labelPrestamosActivos.Size = new System.Drawing.Size(149, 21);
             this.labelPrestamosActivos.TabIndex = 11;
             this.labelPrestamosActivos.Text = "Préstamos Activos";
             // 
@@ -197,6 +197,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.LightGray;
             this.ClientSize = new System.Drawing.Size(984, 640);
             this.Controls.Add(this.panelButtonDevolver);
@@ -221,6 +222,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelButtonDevolver.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

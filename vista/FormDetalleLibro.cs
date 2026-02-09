@@ -10,18 +10,29 @@ namespace BibliotecaVitoriaGasteiz.vista
     public partial class FormDetalleLibro : Form
     {
         public Controlador MiControlador { get; set; }
-        public int LibroId { get; set; }
-        public event EventHandler LibroModificado;
 
+        //Inicializamos a -1 para que el 0 sea válido
+        public int LibroId { get; set; } = -1;
+
+        public event EventHandler LibroModificado;
         private bool modoEdicion = false;
 
         public FormDetalleLibro()
         {
             InitializeComponent();
+            this.Load += new EventHandler(FormDetalleLibro_Load);
         }
 
         private void FormDetalleLibro_Load(object sender, EventArgs e)
         {
+            //Validamos contra -1 (así el ID 0 pasa)
+            if (MiControlador == null || LibroId == -1)
+            {
+                MessageBox.Show($"Error: Datos incompletos (Controlador: {MiControlador != null}, ID: {LibroId})");
+                this.Close();
+                return;
+            }
+
             CargarDatosLibro();
             DeshabilitarEdicion();
         }
@@ -32,214 +43,123 @@ namespace BibliotecaVitoriaGasteiz.vista
             {
                 DataTable dt = MiControlador.BuscarLibroPorId(LibroId);
 
-                if (dt.Rows.Count > 0)
+                if (dt != null && dt.Rows.Count > 0)
                 {
                     DataRow row = dt.Rows[0];
 
                     textBoxTitulo.Text = row["Titulo"].ToString();
                     textBoxEscritor.Text = row["Escritor"].ToString();
-                    textBoxAnoEdicion.Text = row["Ano_Edicion"] != DBNull.Value 
-                        ? row["Ano_Edicion"].ToString() 
-                        : "";
-                    textBoxSinopsis.Text = row["Sinopsis"] != DBNull.Value 
-                        ? row["Sinopsis"].ToString() 
-                        : "";
 
-                    bool disponible = Convert.ToBoolean(row["Disponible"]);
+                    if (row["Ano_Edicion"] != DBNull.Value)
+                        textBoxAnoEdicion.Text = row["Ano_Edicion"].ToString();
+                    else
+                        textBoxAnoEdicion.Text = "";
+
+                    textBoxSinopsis.Text = row["Sinopsis"] != DBNull.Value ? row["Sinopsis"].ToString() : "";
+
+                    bool disponible = false;
+                    if (row["Disponible"] != DBNull.Value)
+                    {
+                        disponible = Convert.ToInt32(row["Disponible"]) == 1;
+                    }
+
                     labelEstado.Text = disponible ? "✓ Disponible" : "✗ Prestado";
-                    labelEstado.ForeColor = disponible 
-                        ? Color.FromArgb(0, 204, 102) 
-                        : Color.FromArgb(255, 87, 87);
+                    labelEstado.ForeColor = disponible ? Color.Green : Color.Red;
                 }
                 else
                 {
-                    MessageBox.Show("No se encontró el libro", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"No se encontró el libro con ID {LibroId} en la base de datos.");
                     this.Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar datos: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.Close();
+                MessageBox.Show($"Error al leer datos: {ex.Message}");
             }
         }
+
+        // --- BOTONES ---
 
         private void BtnEditar_Click(object sender, EventArgs e)
         {
-            if (modoEdicion)
-            {
-                // Guardar cambios
-                GuardarCambios();
-            }
-            else
-            {
-                // Activar modo edición
-                HabilitarEdicion();
-            }
-        }
-
-        private void BtnCancelar_Click(object sender, EventArgs e)
-        {
-            if (modoEdicion)
-            {
-                // Cancelar edición
-                DialogResult result = MessageBox.Show(
-                    "¿Desea cancelar los cambios?",
-                    "Confirmar",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
-                {
-                    CargarDatosLibro();
-                    DeshabilitarEdicion();
-                }
-            }
-            else
-            {
-                // Cerrar formulario
-                this.Close();
-            }
-        }
-
-        private void BtnEliminar_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show(
-                "¿Está seguro de que desea eliminar este libro?",
-                "Confirmar eliminación",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                try
-                {
-                    MiControlador.EliminarLibro(LibroId);
-                    MessageBox.Show("Libro eliminado correctamente", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    LibroModificado?.Invoke(this, EventArgs.Empty);
-                    this.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al eliminar: {ex.Message}", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+            if (modoEdicion) GuardarCambios();
+            else HabilitarEdicion();
         }
 
         private void GuardarCambios()
         {
             try
             {
-                // Validaciones
-                if (string.IsNullOrWhiteSpace(textBoxTitulo.Text))
-                {
-                    MessageBox.Show("El título es obligatorio", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxTitulo.Focus();
-                    return;
-                }
+                if (string.IsNullOrWhiteSpace(textBoxTitulo.Text)) return;
 
-                if (string.IsNullOrWhiteSpace(textBoxEscritor.Text))
-                {
-                    MessageBox.Show("El escritor es obligatorio", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxEscritor.Focus();
-                    return;
-                }
+                int? ano = null;
+                if (int.TryParse(textBoxAnoEdicion.Text, out int a)) ano = a;
 
-                // Validar año
-                int? anoEdicion = null;
-                if (!string.IsNullOrWhiteSpace(textBoxAnoEdicion.Text))
-                {
-                    if (int.TryParse(textBoxAnoEdicion.Text, out int ano))
-                    {
-                        if (ano < 1 || ano > DateTime.Now.Year + 1)
-                        {
-                            MessageBox.Show("El año de edición no es válido", "Validación",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            textBoxAnoEdicion.Focus();
-                            return;
-                        }
-                        anoEdicion = ano;
-                    }
-                    else
-                    {
-                        MessageBox.Show("El año debe ser un número", "Validación",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        textBoxAnoEdicion.Focus();
-                        return;
-                    }
-                }
+                bool disp = labelEstado.Text.Contains("Disponible");
 
-                // Crear objeto Libro
                 var libro = new Libro
                 {
-                    Id = LibroId,
-                    Titulo = textBoxTitulo.Text.Trim(),
-                    Escritor = textBoxEscritor.Text.Trim(),
-                    AnoEdicion = anoEdicion,
-                    Sinopsis = textBoxSinopsis.Text.Trim(),
-                    Disponible = labelEstado.Text.Contains("Disponible")
+                    Id = this.LibroId,
+                    Titulo = textBoxTitulo.Text,
+                    Escritor = textBoxEscritor.Text,
+                    AnoEdicion = ano,
+                    Sinopsis = textBoxSinopsis.Text,
+                    Disponible = disp
                 };
 
                 MiControlador.ModificarLibro(libro);
-
-                MessageBox.Show("Libro modificado correctamente", "Éxito",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Libro guardado correctamente.");
 
                 LibroModificado?.Invoke(this, EventArgs.Empty);
                 DeshabilitarEdicion();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al guardar: " + ex.Message);
             }
         }
 
+        private void BtnCancelar_Click(object sender, EventArgs e)
+        {
+            if (modoEdicion) { CargarDatosLibro(); DeshabilitarEdicion(); }
+            else this.Close();
+        }
+
+        private void BtnEliminar_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("¿Eliminar este libro?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                MiControlador.EliminarLibro(LibroId);
+                LibroModificado?.Invoke(this, EventArgs.Empty);
+                this.Close();
+            }
+        }
+
+        // --- ESTILOS ---
         private void HabilitarEdicion()
         {
             modoEdicion = true;
-
-            textBoxTitulo.ReadOnly = false;
-            textBoxEscritor.ReadOnly = false;
-            textBoxAnoEdicion.ReadOnly = false;
-            textBoxSinopsis.ReadOnly = false;
-
-            textBoxTitulo.BackColor = Color.White;
-            textBoxEscritor.BackColor = Color.White;
-            textBoxAnoEdicion.BackColor = Color.White;
-            textBoxSinopsis.BackColor = Color.White;
-
-            labelBtnEditar.Text = "Guardar";
-            labelBtnCancelar.Text = "Cancelar Edición";
-            panelBtnEliminar.Enabled = false;
-            panelBtnEliminar.BackColor = Color.Gray;
+            SetReadOnly(false, Color.White);
+            if (labelBtnEditar != null) labelBtnEditar.Text = "Guardar";
+            if (labelBtnCancelar != null) labelBtnCancelar.Text = "Cancelar";
+            if (panelBtnEliminar != null) panelBtnEliminar.Enabled = false;
         }
 
         private void DeshabilitarEdicion()
         {
             modoEdicion = false;
+            SetReadOnly(true, Color.WhiteSmoke);
+            if (labelBtnEditar != null) labelBtnEditar.Text = "Editar";
+            if (labelBtnCancelar != null) labelBtnCancelar.Text = "Cerrar";
+            if (panelBtnEliminar != null) panelBtnEliminar.Enabled = true;
+        }
 
-            textBoxTitulo.ReadOnly = true;
-            textBoxEscritor.ReadOnly = true;
-            textBoxAnoEdicion.ReadOnly = true;
-            textBoxSinopsis.ReadOnly = true;
-
-            textBoxTitulo.BackColor = Color.WhiteSmoke;
-            textBoxEscritor.BackColor = Color.WhiteSmoke;
-            textBoxAnoEdicion.BackColor = Color.WhiteSmoke;
-            textBoxSinopsis.BackColor = Color.WhiteSmoke;
-
-            labelBtnEditar.Text = "Editar";
-            labelBtnCancelar.Text = "Cerrar";
-            panelBtnEliminar.Enabled = true;
-            panelBtnEliminar.BackColor = Color.FromArgb(220, 53, 69); // Rojo
+        private void SetReadOnly(bool activado, Color fondo)
+        {
+            textBoxTitulo.ReadOnly = activado; textBoxTitulo.BackColor = fondo;
+            textBoxEscritor.ReadOnly = activado; textBoxEscritor.BackColor = fondo;
+            textBoxAnoEdicion.ReadOnly = activado; textBoxAnoEdicion.BackColor = fondo;
+            textBoxSinopsis.ReadOnly = activado; textBoxSinopsis.BackColor = fondo;
         }
     }
 }

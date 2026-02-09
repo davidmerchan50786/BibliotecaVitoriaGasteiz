@@ -195,8 +195,8 @@ namespace BibliotecaVitoriaGasteiz
             this.Controls.Add(this.panelHeader);
             this.Controls.Add(this.panelLineaSeparacion);
             this.Controls.Add(this.menuStripBarra);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.IsMdiContainer = true;
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "Gestor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Biblioteca Vitoria-Gasteiz";
