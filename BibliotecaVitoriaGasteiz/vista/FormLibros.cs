@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
 using BibliotecaControles;
+using BibliotecaVitoriaGasteiz.helpers; // Necesario para el diseño responsivo y redondeado
 
 namespace BibliotecaVitoriaGasteiz.vista
 {
@@ -26,7 +27,9 @@ namespace BibliotecaVitoriaGasteiz.vista
     /// Muestra: Título, Escritor, Estado (Disponible/Prestado)
     /// Tiene un botón "Ver Detalles" que dispara un evento
     /// 
-    /// El diseño visual fue lo que más me gustó hacer del proyecto.
+    /// DISEÑO VISUAL:
+    /// Se ha refactorizado para ser totalmente responsivo y utilizar el UIHelper
+    /// para obtener bordes redondeados con suavizado (Anti-Aliasing) de alta calidad.
     /// 
     /// Desarrollador: David
     /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
@@ -34,7 +37,9 @@ namespace BibliotecaVitoriaGasteiz.vista
     public partial class FormLibros : Form
     {
         #region Singleton
-        // Patrón Singleton: solo una instancia del formulario
+        // Patrón Singleton: solo una instancia del formulario para optimizar recursos.
+        // Corregido: comprobamos IsDisposed para evitar errores al intentar reabrir 
+        // un objeto que Windows ya ha destruido de la memoria.
         private static FormLibros formulario;
 
         public static FormLibros GetInstance()
@@ -48,8 +53,8 @@ namespace BibliotecaVitoriaGasteiz.vista
         // Controlador compartido (lo recibe desde Gestor.cs)
         public Controlador MiControlador { get; set; }
 
-        // Placeholder para el campo de búsqueda
-        private const string TEXTO_PLACEHOLDER = "Buscar Libro ...";
+        // Placeholder para el campo de búsqueda centralizado en UIHelper
+        private const string PLACEHOLDER_BUSCAR = "Buscar Libro ...";
 
         // Variables de estado
         private int libroIdSeleccionado = 0;
@@ -62,49 +67,68 @@ namespace BibliotecaVitoriaGasteiz.vista
         {
             InitializeComponent();
             ConfigurarEventos();
-            ConfigurarPlaceholder();
+
+            // Usamos el UIHelper para centralizar la lógica del texto fantasma (Placeholder)
+            UIHelper.SetPlaceholder(textBoxBuscar, PLACEHOLDER_BUSCAR);
         }
 
         /// <summary>
         /// Evento Load: Carga los libros al abrir el formulario
-        /// 
-        /// También envío el FlowLayoutPanel al fondo para que no tape
-        /// los controles del panel lateral donde están los campos de añadir libro.
         /// </summary>
         private void FormLibros_Load(object sender, EventArgs e)
         {
             CargarLibros();
 
-            // Aseguro que la lista de tarjetas no tape los botones/textboxes
+            // Aseguro que la lista de tarjetas no tape los botones/textboxes del panel lateral
             flowLayoutPanelLibros.SendToBack();
 
-            // Pongo el foco en el botón Guardar
+            // Pongo el foco en el botón Guardar para una mejor experiencia de teclado
             if (labelGuardar != null)
                 this.ActiveControl = labelGuardar;
         }
 
         /// <summary>
-        /// Configura los eventos de los controles.
-        /// NOTA: He comentado los eventos de los Labels porque ya están asignados 
-        /// en el Designer, para evitar que el click se dispare dos veces.
+        /// Configura los eventos lógicos y los efectos visuales responsivos.
         /// </summary>
         private void ConfigurarEventos()
         {
-            // Botón "Guardar" (Panel)
-            if (panelBotonGuardar != null)
-                panelBotonGuardar.Click += BtnGuardar_Click;
-
-            // Botón "Nuevo" (Panel)
-            if (panelBotonNuevo != null)
-                panelBotonNuevo.Click += BtnNuevo_Click;
+            // Eventos lógicos de botones
+            if (panelBotonGuardar != null) panelBotonGuardar.Click += BtnGuardar_Click;
+            if (panelBotonNuevo != null) panelBotonNuevo.Click += BtnNuevo_Click;
 
             // Búsqueda en tiempo real
             textBoxBuscar.TextChanged += TextBoxBuscar_TextChanged_Real;
+
+            // --- MEJORA DE RENDERIZADO (Invalidación por Resize) ---
+            // Forzamos al control a redibujarse cuando cambia su tamaño. 
+            // Esto es vital para que UIHelper recalcule las curvas sin pixelación.
+            panelBuscarBorder.Resize += (s, e) => panelBuscarBorder.Invalidate();
+            panelTitulo.Resize += (s, e) => panelTitulo.Invalidate();
+            panelEscritor.Resize += (s, e) => panelEscritor.Invalidate();
+            panelAnoEdicion.Resize += (s, e) => panelAnoEdicion.Invalidate();
+            panelSinopsis.Resize += (s, e) => panelSinopsis.Invalidate();
+            panelBotonGuardar.Resize += (s, e) => panelBotonGuardar.Invalidate();
+            panelBotonNuevo.Resize += (s, e) => panelBotonNuevo.Invalidate();
+
+            // --- DISEÑO VISUAL REDONDEADO (UIHelper) ---
+
+            // Buscador con el color corporativo
+            panelBuscarBorder.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.DarkCyan);
+
+            // Campos de texto: Usamos Transparent para que no se vea la línea de contorno 
+            // y solo quede la forma redondeada blanca sobre el fondo gris.
+            panelTitulo.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            panelEscritor.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            panelAnoEdicion.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            panelSinopsis.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+
+            // Botones redondeados
+            panelBotonGuardar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
+            panelBotonNuevo.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
         }
 
         /// <summary>
-        /// Carga todos los libros desde la base de datos
-        /// y los muestra como tarjetas en el FlowLayoutPanel
+        /// Carga todos los libros desde la base de datos y los muestra como tarjetas.
         /// </summary>
         private void CargarLibros()
         {
@@ -123,73 +147,47 @@ namespace BibliotecaVitoriaGasteiz.vista
         }
 
         /// <summary>
-        /// Muestra los libros como tarjetas visuales en el FlowLayoutPanel
-        /// 
-        /// PROCESO:
-        /// 1. Limpio todas las tarjetas anteriores
-        /// 2. Por cada libro en el DataTable:
-        ///    - Creo una TarjetaLibro (UserControl)
-        ///    - Le paso los datos (ID, Titulo, Escritor, Disponible)
-        ///    - Conecto el evento verDetalles (cuando click en "Ver Detalles")
-        ///    - Añado la tarjeta al FlowLayoutPanel
-        /// 
-        /// El FlowLayoutPanel las organiza automáticamente en filas/columnas
-        /// según el espacio disponible (responsive).
+        /// PROCESO DE TARJETAS:
+        /// 1. Limpio el FlowLayoutPanel.
+        /// 2. Itero el DataTable creando una instancia del UserControl TarjetaLibro.
+        /// 3. El FlowLayoutPanel organiza las tarjetas de forma "responsive" automáticamente.
         /// </summary>
         private void MostrarLibrosEnPanel(DataTable dt)
         {
             flowLayoutPanelLibros.Controls.Clear();
             if (dt == null || dt.Rows.Count == 0) return;
 
-            // SuspendLayout mejora el rendimiento al añadir muchos controles
-            flowLayoutPanelLibros.SuspendLayout();
+            flowLayoutPanelLibros.SuspendLayout(); // Mejora el rendimiento al añadir muchos controles
 
             foreach (DataRow row in dt.Rows)
             {
-                // Creo una nueva tarjeta para cada libro
                 TarjetaLibro tarjeta = new TarjetaLibro
                 {
                     Id = Convert.ToInt32(row["ID"]),
                     Titulo = row["Titulo"].ToString(),
                     Escritor = row["Escritor"].ToString(),
-                    // Disponible: 1 = true, 0 = false (SQLite guarda booleanos como INTEGER)
                     Disponible = row["Disponible"] != DBNull.Value &&
                                  Convert.ToInt32(row["Disponible"]) == 1,
-                    Margin = new Padding(10)  // Espacio entre tarjetas
+                    Margin = new Padding(10)
                 };
 
-                // Conecto el evento verDetalles que dispara la tarjeta
                 tarjeta.verDetalles += Tarjeta_VerDetalles;
-
-                // Añado la tarjeta al panel
                 flowLayoutPanelLibros.Controls.Add(tarjeta);
             }
-
             flowLayoutPanelLibros.ResumeLayout();
         }
 
         /// <summary>
-        /// Evento que se dispara cuando se hace click en "Ver Detalles" de una tarjeta
-        /// 
-        /// Abre FormDetalleLibro en modo modal (ShowDialog) para ver/editar
-        /// la información completa del libro.
-        /// 
-        /// Cuando se cierra el FormDetalleLibro, recargo los libros
-        /// por si se modificó o eliminó algo.
+        /// Abre el formulario modal de detalle al pulsar el botón de la tarjeta.
         /// </summary>
         private void Tarjeta_VerDetalles(object sender, VerDetallesLibroEventArgs e)
         {
             try
             {
-                // Creo el formulario de detalle
                 FormDetalleLibro formDetalle = new FormDetalleLibro();
                 formDetalle.MiControlador = this.MiControlador;
-                formDetalle.LibroId = e.Id;  // Paso el ID del libro
-
-                // Cuando se cierre, recargo los libros
-                formDetalle.FormClosed += (s, args) => CargarLibros();
-
-                // Muestro el formulario en modo modal (bloquea el formulario padre)
+                formDetalle.LibroId = e.Id;
+                formDetalle.FormClosed += (s, args) => CargarLibros(); // Recarga al cerrar
                 formDetalle.ShowDialog(this);
             }
             catch (Exception ex)
@@ -199,44 +197,30 @@ namespace BibliotecaVitoriaGasteiz.vista
         }
 
         /// <summary>
-        /// Búsqueda en tiempo real mientras el usuario escribe
-        /// 
-        /// Busca coincidencias en Título o Escritor.
-        /// Si el campo está vacío o tiene el placeholder, muestra todos los libros.
+        /// Búsqueda dinámica. Mejora la UX al encontrar libros sin necesidad de un botón "Buscar".
         /// </summary>
         private void TextBoxBuscar_TextChanged_Real(object sender, EventArgs e)
         {
-            // Ignorar si es el placeholder
-            if (textBoxBuscar.Text == TEXTO_PLACEHOLDER) return;
+            if (textBoxBuscar.Text == PLACEHOLDER_BUSCAR) return;
 
             string texto = textBoxBuscar.Text.Trim();
-
             try
             {
                 if (string.IsNullOrEmpty(texto))
-                    CargarLibros();  // Vacío = mostrar todos
+                    CargarLibros();
                 else
                     MostrarLibrosEnPanel(MiControlador.BuscarLibros(texto));
             }
-            catch (Exception)
-            {
-                // Ignoro errores al escribir rápido
-            }
+            catch (Exception) { /* Silenciar errores de escritura rápida */ }
         }
 
         /// <summary>
-        /// Botón "Guardar" - Añade o edita un libro
-        /// 
-        /// VALIDACIONES:
-        /// 1. Título obligatorio
-        /// 2. Escritor obligatorio
-        /// 3. Año (opcional) debe ser numérico si se proporciona
+        /// Botón "Guardar" con validación obligatoria de Título y Escritor.
         /// </summary>
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             try
             {
-                // VALIDACIÓN 1: Título y Escritor obligatorios
                 if (string.IsNullOrWhiteSpace(textBoxTitulo.Text) ||
                     string.IsNullOrWhiteSpace(textBoxEscritor.Text))
                 {
@@ -244,30 +228,22 @@ namespace BibliotecaVitoriaGasteiz.vista
                     return;
                 }
 
-                // VALIDACIÓN 2: Año (opcional) debe ser numérico
                 int? ano = null;
                 if (!string.IsNullOrWhiteSpace(textBoxAnoEdicion.Text))
                 {
-                    if (int.TryParse(textBoxAnoEdicion.Text, out int a))
-                        ano = a;
-                    else
-                    {
-                        MessageBox.Show("El año debe ser un número.");
-                        return;
-                    }
+                    if (int.TryParse(textBoxAnoEdicion.Text, out int a)) ano = a;
+                    else { MessageBox.Show("El año debe ser un número."); return; }
                 }
 
-                // Crear objeto Libro
                 Libro libro = new Libro
                 {
                     Titulo = textBoxTitulo.Text.Trim(),
                     Escritor = textBoxEscritor.Text.Trim(),
                     AnoEdicion = ano,
                     Sinopsis = textBoxSinopsis.Text.Trim(),
-                    Disponible = true  // Por defecto los libros nuevos están disponibles
+                    Disponible = true
                 };
 
-                // Decidir si es CREAR o MODIFICAR
                 if (modoEdicion)
                 {
                     libro.Id = libroIdSeleccionado;
@@ -280,7 +256,6 @@ namespace BibliotecaVitoriaGasteiz.vista
                     MessageBox.Show("Libro añadido correctamente.");
                 }
 
-                // Actualizar interfaz
                 LimpiarCampos();
                 CargarLibros();
             }
@@ -290,18 +265,11 @@ namespace BibliotecaVitoriaGasteiz.vista
             }
         }
 
-        /// <summary>
-        /// Botón "Nuevo" - Limpia el formulario
-        /// </summary>
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
             LimpiarCampos();
         }
 
-        /// <summary>
-        /// Limpia todos los campos del panel lateral
-        /// Deja el formulario listo para añadir un nuevo libro
-        /// </summary>
         private void LimpiarCampos()
         {
             textBoxTitulo.Clear();
@@ -309,50 +277,17 @@ namespace BibliotecaVitoriaGasteiz.vista
             textBoxAnoEdicion.Clear();
             textBoxSinopsis.Clear();
 
+            textBoxBuscar.Text = PLACEHOLDER_BUSCAR;
+            textBoxBuscar.ForeColor = Color.Gray;
+
             modoEdicion = false;
             libroIdSeleccionado = 0;
             labelGuardar.Text = "Guardar";
-
             textBoxTitulo.Focus();
         }
 
-        /// <summary>
-        /// Configura el placeholder del campo de búsqueda
-        /// (Texto gris que desaparece al hacer clic)
-        /// </summary>
-        private void ConfigurarPlaceholder()
-        {
-            textBoxBuscar.Text = TEXTO_PLACEHOLDER;
-            textBoxBuscar.ForeColor = Color.Gray;
-
-            // Cuando entra (recibe el foco): limpiar el placeholder
-            textBoxBuscar.Enter += (s, e) =>
-            {
-                if (textBoxBuscar.Text == TEXTO_PLACEHOLDER)
-                {
-                    textBoxBuscar.Text = "";
-                    textBoxBuscar.ForeColor = Color.Black;
-                }
-            };
-
-            // Cuando sale (pierde el foco): restaurar el placeholder si está vacío
-            textBoxBuscar.Leave += (s, e) =>
-            {
-                if (string.IsNullOrWhiteSpace(textBoxBuscar.Text))
-                {
-                    textBoxBuscar.Text = TEXTO_PLACEHOLDER;
-                    textBoxBuscar.ForeColor = Color.Gray;
-                }
-            };
-        }
-
-        // --- MÉTODOS DE COMPATIBILIDAD CON EL DISEÑADOR ---
-
-        private void textBoxBuscar_TextChanged(object sender, EventArgs e)
-        {
-            TextBoxBuscar_TextChanged_Real(sender, e);
-        }
-
+        // MÉTODOS DE COMPATIBILIDAD CON EL DISEÑADOR
+        private void textBoxBuscar_TextChanged(object sender, EventArgs e) { TextBoxBuscar_TextChanged_Real(sender, e); }
         private void panelBuscarBorder_Paint(object sender, PaintEventArgs e) { }
         private void textBoxDescripcion_TextChanged(object sender, EventArgs e) { }
         private void labelTitulo_Click(object sender, EventArgs e) { }

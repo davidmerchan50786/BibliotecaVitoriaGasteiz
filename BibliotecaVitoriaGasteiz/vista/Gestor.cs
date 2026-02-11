@@ -172,21 +172,30 @@ namespace BibliotecaVitoriaGasteiz
         /// </summary>
         private void InsertarFormulario(Form formulario)
         {
-            // PASO 1: Cerrar todos los formularios hijos anteriores
+            // 1. Cerramos formularios que NO sean el que queremos abrir
+            // Esto evita cerrar y reabrir el mismo si el usuario hace doble clic rápido
             foreach (Form hijo in this.MdiChildren)
             {
-                hijo.Close();
+                if (hijo != formulario)
+                {
+                    hijo.Close();
+                }
             }
 
-            // PASO 2: Configurar el nuevo formulario como hijo MDI
-            formulario.MdiParent = this;
-            formulario.Dock = DockStyle.Fill;
-            formulario.FormBorderStyle = FormBorderStyle.None;
-
-            // PASO 3: Mostrar el formulario
-            formulario.Show();
+            // 2. Si ya está abierto, solo lo traemos al frente
+            if (formulario.Visible)
+            {
+                formulario.BringToFront();
+            }
+            else
+            {
+                // 3. Si no es visible (es nuevo o se cerró antes), lo configuramos
+                formulario.MdiParent = this;
+                formulario.Dock = DockStyle.Fill;
+                formulario.FormBorderStyle = FormBorderStyle.None;
+                formulario.Show();
+            }
         }
-
         /// <summary>
         /// Actualiza el estilo del menú de navegación
         /// 

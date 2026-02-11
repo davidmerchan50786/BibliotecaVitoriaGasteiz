@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
+using BibliotecaVitoriaGasteiz.helpers; // Necesario para el diseño responsivo
 
 namespace BibliotecaVitoriaGasteiz.vista
 {
@@ -13,15 +14,18 @@ namespace BibliotecaVitoriaGasteiz.vista
     /// Permite gestionar los usuarios de la biblioteca:
     /// - Crear nuevos usuarios
     /// - Modificar usuarios existentes
-    /// - Buscar usuarios por nombre/apellidos
+    /// - Buscar usuarios por nombre/apellidos en tiempo real
     /// - Visualizar todos los usuarios en una tabla
     /// 
-    /// VALIDACIONES IMPORTANTES:
-    /// - Nombre y Apellido_1 obligatorios
-    /// - Teléfono: 9 dígitos exactos (como los móviles españoles)
+    /// DISEÑO RESPONSIVO Y VISUAL:
+    /// - Utiliza TableLayoutPanel para adaptarse a diferentes tamaños de ventana.
+    /// - Implementa redibujado manual (Invalidate) para mantener los bordes redondeados
+    ///   nítidos al redimensionar la ventana (evita dientes de sierra).
     /// 
-    /// El diseño mantiene el estilo visual del resto de la aplicación
-    /// con paneles personalizados en vez de botones estándar.
+    /// SOLUCIÓN DE ERRORES (NullReference):
+    /// - Se han añadido comprobaciones de seguridad en CargarUsuarios() y en la búsqueda
+    ///   para evitar que el formulario intente acceder a la base de datos antes de que
+    ///   el Gestor le haya inyectado el Controlador.
     /// 
     /// Desarrollador: David
     /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
@@ -29,9 +33,13 @@ namespace BibliotecaVitoriaGasteiz.vista
     public partial class FormUsuarios : Form
     {
         #region Singleton
-        // Patrón Singleton: solo una instancia del formulario
+        // Patrón Singleton: Asegura que solo exista una instancia del formulario.
         private static FormUsuarios formulario;
 
+        /// <summary>
+        /// Obtiene la instancia única del formulario.
+        /// Si se cerró previamente (IsDisposed), crea una nueva para evitar errores.
+        /// </summary>
         public static FormUsuarios GetInstance()
         {
             if (formulario == null || formulario.IsDisposed)
@@ -42,63 +50,93 @@ namespace BibliotecaVitoriaGasteiz.vista
         }
         #endregion
 
-        // Controlador compartido (lo recibe desde Gestor.cs)
+        // Controlador compartido (Patrón MVC) inyectado desde el Gestor
         public Controlador MiControlador { get; set; }
 
-        // Variables de estado para saber si estamos editando
+        // Variables de estado para el control de edición
         private int usuarioIdSeleccionado = 0;
         private bool modoEdicion = false;
 
+        // Constante para el texto fantasma del buscador
+        private const string PLACEHOLDER_BUSCAR = "Buscar usuario...";
+
         /// <summary>
-        /// Constructor privado (patrón Singleton)
+        /// Constructor privado (Singleton).
+        /// Inicializa componentes y configura la estética visual.
         /// </summary>
         private FormUsuarios()
         {
             InitializeComponent();
             ConfigurarEventos();
+
+            // Configuro el placeholder visual usando el Helper
+            UIHelper.SetPlaceholder(textBoxBuscarUsuario, PLACEHOLDER_BUSCAR);
         }
 
         /// <summary>
-        /// Configura los eventos de los controles
-        /// 
-        /// Los botones son en realidad Paneles con Labels (diseño personalizado)
-        /// por eso conecto tanto el Panel como el Label al mismo evento.
+        /// Configura los eventos lógicos y de renderizado visual.
         /// </summary>
         private void ConfigurarEventos()
         {
-            // Búsqueda en tiempo real
+            // Evento de búsqueda en tiempo real
             textBoxBuscarUsuario.TextChanged += TextBoxBuscar_TextChanged;
 
-            // Botón "Añadir" / "Guardar"
-            if (panelButtonAnadir != null)
-                panelButtonAnadir.Click += BtnGuardar_Click;
+            // Eventos de botones (Paneles que actúan como botones)
+            if (panelButtonAnadir != null) panelButtonAnadir.Click += BtnGuardar_Click;
+            if (panelButtonEditar != null) panelButtonEditar.Click += BtnNuevo_Click;
 
-            // Botón "Nuevo" / "Limpiar"
-            if (panelButtonEditar != null)
-                panelButtonEditar.Click += BtnNuevo_Click;
+            // --- LÓGICA DE REDIBUJADO RESPONSIVO (Anti-Aliasing) ---
+            // Al cambiar el tamaño de la ventana (Resize), forzamos el redibujado (Invalidate)
+            // de cada panel. Esto evita que los bordes redondeados se vean pixelados o deformes.
+            panelBuscarBorder.Resize += (s, e) => panelBuscarBorder.Invalidate();
+            panelNombre.Resize += (s, e) => panelNombre.Invalidate();
+            panelApellido1.Resize += (s, e) => panelApellido1.Invalidate();
+            panelApellido2.Resize += (s, e) => panelApellido2.Invalidate();
+            panelTelefono.Resize += (s, e) => panelTelefono.Invalidate();
+            panelButtonAnadir.Resize += (s, e) => panelButtonAnadir.Invalidate();
+            panelButtonEditar.Resize += (s, e) => panelButtonEditar.Invalidate();
+
+            // --- APLICACIÓN DE DISEÑO (UIHelper) ---
+            // Dibujamos los bordes redondeados con GDI+ de alta calidad.
+            panelBuscarBorder.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.DarkCyan);
+
+            // Paneles de texto con fondo transparente para integración limpia
+            panelNombre.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            panelApellido1.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            panelApellido2.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            panelTelefono.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+
+            // Botones de acción
+            panelButtonAnadir.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
+            panelButtonEditar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
+
+            // Conectar clics de las etiquetas también a la lógica de los botones
+            labelAnadir.Click += BtnGuardar_Click;
+            labelEditar.Click += BtnNuevo_Click;
         }
 
         /// <summary>
-        /// Evento Load: Carga los usuarios al abrir el formulario
+        /// Carga inicial de datos y aseguramiento de capas (Z-Order).
         /// </summary>
         private void FormUsuarios_Load(object sender, EventArgs e)
         {
             CargarUsuarios();
+
+            // Traer al frente los TextBox para evitar que el redibujado del panel los tape
+            textBoxBuscarUsuario.BringToFront();
+            textBoxNombre.BringToFront();
+            textBoxApellido1.BringToFront();
+            textBoxApellido2.BringToFront();
+            textBoxTelefono.BringToFront();
         }
 
         /// <summary>
-        /// Búsqueda en tiempo real mientras el usuario escribe
-        /// 
-        /// Si el campo está vacío o tiene el placeholder, muestra todos los usuarios.
-        /// Si hay texto, busca coincidencias en Nombre, Apellido_1 y Apellido_2.
-        /// 
-        /// Esto lo aprendí de la documentación de Microsoft sobre búsqueda incremental.
+        /// Filtra la lista de usuarios mientras se escribe.
         /// </summary>
         private void TextBoxBuscar_TextChanged(object sender, EventArgs e)
         {
-            // Si está vacío o es el placeholder, mostrar todos
-            if (string.IsNullOrWhiteSpace(textBoxBuscarUsuario.Text) ||
-                textBoxBuscarUsuario.Text == "Buscar usuario...")
+            // Ignorar si es el placeholder o está vacío
+            if (textBoxBuscarUsuario.Text == PLACEHOLDER_BUSCAR || string.IsNullOrWhiteSpace(textBoxBuscarUsuario.Text))
             {
                 CargarUsuarios();
                 return;
@@ -106,121 +144,96 @@ namespace BibliotecaVitoriaGasteiz.vista
 
             try
             {
-                // Buscar usuarios que coincidan con el texto
+                // --- PROTECCIÓN CONTRA CRASH ---
+                // Si el Gestor aún no ha pasado el controlador, salimos sin error.
+                if (MiControlador == null) return;
+
+                // Búsqueda insensible a mayúsculas/minúsculas en la BD
                 DataTable dt = MiControlador.BuscarUsuarios(textBoxBuscarUsuario.Text);
                 MostrarUsuariosEnGrid(dt);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al buscar: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // En eventos de tecleo rápido, mejor usar Debug que MessageBox para no interrumpir
+                System.Diagnostics.Debug.WriteLine($"Error en búsqueda: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Botón "Añadir" o "Guardar" - Crea o modifica un usuario
-        /// 
-        /// VALIDACIONES (muy importantes):
-        /// 1. Nombre obligatorio
-        /// 2. Apellido_1 obligatorio
-        /// 3. Teléfono obligatorio
-        /// 4. Teléfono debe ser numérico
-        /// 5. Teléfono debe tener exactamente 9 dígitos (estándar español)
-        /// 
-        /// Si estamos en modo edición, modifica el usuario seleccionado.
-        /// Si no, crea uno nuevo.
-        /// 
-        /// Estas validaciones las vi en los apuntes de clase sobre formularios.
+        /// Lógica principal de Guardado (Alta o Modificación).
+        /// Incluye todas las validaciones de negocio.
         /// </summary>
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             try
             {
+                // --- PROTECCIÓN CONTRA CRASH ---
+                if (MiControlador == null)
+                {
+                    MessageBox.Show("Error: El controlador no está inicializado.");
+                    return;
+                }
+
                 // VALIDACIÓN 1: Nombre obligatorio
                 if (string.IsNullOrWhiteSpace(textBoxNombre.Text))
                 {
-                    MessageBox.Show("El nombre es obligatorio", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El nombre es un campo obligatorio.");
                     textBoxNombre.Focus();
                     return;
                 }
 
-                // VALIDACIÓN 2: Primer apellido obligatorio
+                // VALIDACIÓN 2: Primer Apellido obligatorio
                 if (string.IsNullOrWhiteSpace(textBoxApellido1.Text))
                 {
-                    MessageBox.Show("El primer apellido es obligatorio", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El primer apellido es obligatorio.");
                     textBoxApellido1.Focus();
                     return;
                 }
 
-                // VALIDACIÓN 3: Teléfono obligatorio
-                if (string.IsNullOrWhiteSpace(textBoxTelefono.Text))
+                // VALIDACIÓN 3: Teléfono (Numérico y longitud exacta de 9 dígitos)
+                if (string.IsNullOrWhiteSpace(textBoxTelefono.Text) ||
+                    !int.TryParse(textBoxTelefono.Text, out int telefono) ||
+                    textBoxTelefono.Text.Length != 9)
                 {
-                    MessageBox.Show("El teléfono es obligatorio", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El teléfono debe ser numérico y contener 9 dígitos.");
                     textBoxTelefono.Focus();
                     return;
                 }
 
-                // VALIDACIÓN 4: Teléfono debe ser numérico
-                if (!int.TryParse(textBoxTelefono.Text, out int telefono))
-                {
-                    MessageBox.Show("El teléfono debe ser un número", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxTelefono.Focus();
-                    return;
-                }
-
-                // VALIDACIÓN 5: Teléfono debe tener 9 dígitos
-                // En España, los móviles tienen 9 dígitos (ej: 612345678)
-                if (textBoxTelefono.Text.Length != 9)
-                {
-                    MessageBox.Show("El teléfono debe tener 9 dígitos", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxTelefono.Focus();
-                    return;
-                }
-
-                // Crear objeto Usuario con los datos del formulario
+                // Construcción del objeto modelo
                 var usuario = new Usuario
                 {
                     Nombre = textBoxNombre.Text.Trim(),
                     Apellido1 = textBoxApellido1.Text.Trim(),
-                    Apellido2 = textBoxApellido2.Text.Trim(),  // Opcional (puede estar vacío)
+                    Apellido2 = textBoxApellido2.Text.Trim(), // Opcional
                     Telefono = telefono
                 };
 
-                // Decidir si es CREAR o MODIFICAR
+                // Decisión: INSERTAR vs ACTUALIZAR
                 if (modoEdicion)
                 {
-                    // MODIFICAR: Asigno el ID del usuario seleccionado
                     usuario.Id = usuarioIdSeleccionado;
                     MiControlador.ModificarUsuario(usuario);
-                    MessageBox.Show("Usuario modificado correctamente", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Usuario modificado correctamente.");
                 }
                 else
                 {
-                    // CREAR: No asigno ID, SQLite lo genera automáticamente
                     MiControlador.InsertarUsuario(usuario);
-                    MessageBox.Show("Usuario guardado correctamente", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Usuario registrado con éxito.");
                 }
 
-                // Actualizar interfaz
+                // Limpieza y recarga
                 LimpiarCampos();
                 CargarUsuarios();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al procesar la solicitud: {ex.Message}", "Error Crítico");
             }
         }
 
         /// <summary>
-        /// Botón "Nuevo" - Limpia el formulario para añadir un nuevo usuario
+        /// Limpia el formulario para permitir un nuevo registro.
         /// </summary>
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
@@ -228,60 +241,44 @@ namespace BibliotecaVitoriaGasteiz.vista
         }
 
         /// <summary>
-        /// Carga todos los usuarios en el DataGridView
+        /// Recupera la lista completa de usuarios desde el controlador.
         /// </summary>
         private void CargarUsuarios()
         {
             try
             {
+                // --- PROTECCIÓN CONTRA CRASH (SOLUCIÓN DEL ERROR NULLREFERENCE) ---
+                // El evento Load puede dispararse antes de que el Gestor asigne 'MiControlador'.
+                // Si es null, simplemente abortamos la carga sin explotar.
+                if (MiControlador == null) return;
+
                 DataTable dt = MiControlador.ObtenerUsuarios();
                 MostrarUsuariosEnGrid(dt);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar usuarios: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al cargar la lista: {ex.Message}", "Error");
             }
         }
 
         /// <summary>
-        /// Muestra los usuarios en el DataGridView
-        /// 
-        /// Configuro los encabezados y anchos de las columnas
-        /// para que la tabla sea más legible.
-        /// 
-        /// Las columnas vienen directamente de la tabla Usuarios:
-        /// - ID, Nombre, Apellido_1, Apellido_2, Telefono
+        /// Configura el DataGridView para una visualización limpia y moderna.
         /// </summary>
         private void MostrarUsuariosEnGrid(DataTable dt)
         {
             dataGridViewUsuarios.DataSource = dt;
 
-            // Configurar columnas solo si hay datos
-            if (dataGridViewUsuarios.Columns.Count > 0)
-            {
-                dataGridViewUsuarios.Columns["ID"].HeaderText = "ID";
-                dataGridViewUsuarios.Columns["ID"].Width = 50;
-
-                dataGridViewUsuarios.Columns["Nombre"].HeaderText = "Nombre";
-                dataGridViewUsuarios.Columns["Nombre"].Width = 120;
-
-                dataGridViewUsuarios.Columns["Apellido_1"].HeaderText = "Primer Apellido";
-                dataGridViewUsuarios.Columns["Apellido_1"].Width = 120;
-
-                dataGridViewUsuarios.Columns["Apellido_2"].HeaderText = "Segundo Apellido";
-                dataGridViewUsuarios.Columns["Apellido_2"].Width = 120;
-
-                dataGridViewUsuarios.Columns["Telefono"].HeaderText = "Teléfono";
-                dataGridViewUsuarios.Columns["Telefono"].Width = 100;
-            }
+            // Estilos visuales del Grid
+            dataGridViewUsuarios.BorderStyle = BorderStyle.None;
+            dataGridViewUsuarios.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(238, 239, 249);
+            dataGridViewUsuarios.DefaultCellStyle.SelectionBackColor = Color.DarkTurquoise;
+            dataGridViewUsuarios.BackgroundColor = Color.White;
+            dataGridViewUsuarios.RowHeadersVisible = false; // Ocultar selector de fila lateral
         }
 
         /// <summary>
-        /// Limpia todos los campos del formulario
-        /// 
-        /// Resetea el modo edición y deja el formulario listo
-        /// para crear un nuevo usuario.
+        /// Restablece el estado del formulario a "Nuevo Registro".
+        /// Borra textos y reinicia variables de control.
         /// </summary>
         private void LimpiarCampos()
         {
@@ -289,32 +286,21 @@ namespace BibliotecaVitoriaGasteiz.vista
             textBoxApellido1.Clear();
             textBoxApellido2.Clear();
             textBoxTelefono.Clear();
-            textBoxBuscarUsuario.Text = "Buscar usuario...";
+
+            // Restaurar el placeholder visualmente
+            textBoxBuscarUsuario.Text = PLACEHOLDER_BUSCAR;
+            textBoxBuscarUsuario.ForeColor = Color.Gray;
 
             modoEdicion = false;
             usuarioIdSeleccionado = 0;
-            labelAnadir.Text = "Guardar";
+            labelAnadir.Text = "Guardar"; // Restaurar texto del botón
 
-            textBoxNombre.Focus();  // Pongo el foco en el primer campo
+            textBoxNombre.Focus();
         }
 
-        // --- MÉTODOS DE COMPATIBILIDAD CON EL DISEÑADOR ---
-        // Estos métodos están conectados desde el diseñador y llaman a los métodos reales
-
-        /// <summary>
-        /// Evento del diseñador - Llama al método real de búsqueda
-        /// </summary>
-        private void textBoxBuscarUsuario_TextChanged(object sender, EventArgs e)
-        {
-            TextBoxBuscar_TextChanged(sender, e);
-        }
-
-        /// <summary>
-        /// Evento del diseñador - Llama al método real de guardar
-        /// </summary>
-        private void labelAnadir_Click(object sender, EventArgs e)
-        {
-            BtnGuardar_Click(sender, e);
-        }
+        // --- MÉTODOS DE COMPATIBILIDAD PARA EL DISEÑADOR DE VS ---
+        // Evitan errores si el diseñador intenta enlazar eventos automáticamente
+        private void textBoxBuscarUsuario_TextChanged_Designer(object sender, EventArgs e) { TextBoxBuscar_TextChanged(sender, e); }
+        private void labelAnadir_Click_Designer(object sender, EventArgs e) { BtnGuardar_Click(sender, e); }
     }
 }
