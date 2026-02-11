@@ -51,7 +51,7 @@ namespace BibliotecaVitoriaGasteiz.vista
         // Placeholder para el campo de búsqueda
         private const string TEXTO_PLACEHOLDER = "Buscar Libro ...";
 
-        // Variables de estado (aunque no las uso mucho en este formulario)
+        // Variables de estado
         private int libroIdSeleccionado = 0;
         private bool modoEdicion = false;
 
@@ -84,24 +84,19 @@ namespace BibliotecaVitoriaGasteiz.vista
         }
 
         /// <summary>
-        /// Configura los eventos de los controles
-        /// 
-        /// Los botones son Paneles con Labels (diseño personalizado)
-        /// por eso conecto ambos al mismo evento.
+        /// Configura los eventos de los controles.
+        /// NOTA: He comentado los eventos de los Labels porque ya están asignados 
+        /// en el Designer, para evitar que el click se dispare dos veces.
         /// </summary>
         private void ConfigurarEventos()
         {
-            // Botón "Guardar" (Panel + Label)
+            // Botón "Guardar" (Panel)
             if (panelBotonGuardar != null)
                 panelBotonGuardar.Click += BtnGuardar_Click;
-            if (labelGuardar != null)
-                labelGuardar.Click += BtnGuardar_Click;
 
-            // Botón "Nuevo" (Panel + Label)
+            // Botón "Nuevo" (Panel)
             if (panelBotonNuevo != null)
                 panelBotonNuevo.Click += BtnNuevo_Click;
-            if (labelNuevo != null)
-                labelNuevo.Click += BtnNuevo_Click;
 
             // Búsqueda en tiempo real
             textBoxBuscar.TextChanged += TextBoxBuscar_TextChanged_Real;
@@ -140,9 +135,6 @@ namespace BibliotecaVitoriaGasteiz.vista
         /// 
         /// El FlowLayoutPanel las organiza automáticamente en filas/columnas
         /// según el espacio disponible (responsive).
-        /// 
-        /// Esta forma de mostrar datos la vi en aplicaciones modernas
-        /// y quise aplicarla en vez de usar el típico DataGridView.
         /// </summary>
         private void MostrarLibrosEnPanel(DataTable dt)
         {
@@ -167,7 +159,6 @@ namespace BibliotecaVitoriaGasteiz.vista
                 };
 
                 // Conecto el evento verDetalles que dispara la tarjeta
-                // cuando se hace click en "Ver Detalles"
                 tarjeta.verDetalles += Tarjeta_VerDetalles;
 
                 // Añado la tarjeta al panel
@@ -185,9 +176,6 @@ namespace BibliotecaVitoriaGasteiz.vista
         /// 
         /// Cuando se cierra el FormDetalleLibro, recargo los libros
         /// por si se modificó o eliminó algo.
-        /// 
-        /// Este evento lo dispara el UserControl TarjetaLibro mediante
-        /// el objeto VerDetallesLibroEventArgs que contiene el ID del libro.
         /// </summary>
         private void Tarjeta_VerDetalles(object sender, VerDetallesLibroEventArgs e)
         {
@@ -213,14 +201,8 @@ namespace BibliotecaVitoriaGasteiz.vista
         /// <summary>
         /// Búsqueda en tiempo real mientras el usuario escribe
         /// 
-        /// Busca coincidencias en:
-        /// - Título del libro
-        /// - Nombre del escritor
-        /// 
+        /// Busca coincidencias en Título o Escritor.
         /// Si el campo está vacío o tiene el placeholder, muestra todos los libros.
-        /// 
-        /// Esto mejora mucho la experiencia de usuario porque puede
-        /// encontrar libros rápidamente sin hacer click en "Buscar".
         /// </summary>
         private void TextBoxBuscar_TextChanged_Real(object sender, EventArgs e)
         {
@@ -236,10 +218,9 @@ namespace BibliotecaVitoriaGasteiz.vista
                 else
                     MostrarLibrosEnPanel(MiControlador.BuscarLibros(texto));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Ignoro errores al escribir rápido
-                // (para que no aparezcan popups mientras se escribe)
             }
         }
 
@@ -250,9 +231,6 @@ namespace BibliotecaVitoriaGasteiz.vista
         /// 1. Título obligatorio
         /// 2. Escritor obligatorio
         /// 3. Año (opcional) debe ser numérico si se proporciona
-        /// 
-        /// Los campos están en el panel lateral/inferior del formulario.
-        /// Por defecto los libros nuevos se crean como Disponible = true.
         /// </summary>
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
@@ -340,14 +318,7 @@ namespace BibliotecaVitoriaGasteiz.vista
 
         /// <summary>
         /// Configura el placeholder del campo de búsqueda
-        /// 
-        /// PLACEHOLDER: Texto gris que aparece cuando el campo está vacío
-        /// y desaparece al hacer click.
-        /// 
-        /// Esto mejora la UX porque el usuario sabe para qué es el campo
-        /// sin necesidad de un Label adicional.
-        /// 
-        /// Lo aprendí de ejemplos de la documentación de Microsoft.
+        /// (Texto gris que desaparece al hacer clic)
         /// </summary>
         private void ConfigurarPlaceholder()
         {
@@ -376,24 +347,14 @@ namespace BibliotecaVitoriaGasteiz.vista
         }
 
         // --- MÉTODOS DE COMPATIBILIDAD CON EL DISEÑADOR ---
-        // Estos métodos evitan errores si el diseñador los busca
 
-        /// <summary>
-        /// Evento del diseñador - Llama al método real de búsqueda
-        /// </summary>
         private void textBoxBuscar_TextChanged(object sender, EventArgs e)
         {
             TextBoxBuscar_TextChanged_Real(sender, e);
         }
 
-        /// <summary>
-        /// Evento del diseñador - Método vacío
-        /// </summary>
         private void panelBuscarBorder_Paint(object sender, PaintEventArgs e) { }
-
-        /// <summary>
-        /// Evento del diseñador - Método vacío
-        /// </summary>
         private void textBoxDescripcion_TextChanged(object sender, EventArgs e) { }
+        private void labelTitulo_Click(object sender, EventArgs e) { }
     }
 }

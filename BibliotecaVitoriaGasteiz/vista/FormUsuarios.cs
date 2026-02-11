@@ -70,12 +70,12 @@ namespace BibliotecaVitoriaGasteiz.vista
             textBoxBuscarUsuario.TextChanged += TextBoxBuscar_TextChanged;
 
             // Botón "Añadir" / "Guardar"
-            panelButtonAnadir.Click += BtnGuardar_Click;
-            labelAnadir.Click += BtnGuardar_Click;
+            if (panelButtonAnadir != null)
+                panelButtonAnadir.Click += BtnGuardar_Click;
 
             // Botón "Nuevo" / "Limpiar"
-            panelButtonEditar.Click += BtnNuevo_Click;
-            labelEditar.Click += BtnNuevo_Click;
+            if (panelButtonEditar != null)
+                panelButtonEditar.Click += BtnNuevo_Click;
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace BibliotecaVitoriaGasteiz.vista
 
             modoEdicion = false;
             usuarioIdSeleccionado = 0;
-            labelAnadir.Text = "Añadir";
+            labelAnadir.Text = "Guardar";
 
             textBoxNombre.Focus();  // Pongo el foco en el primer campo
         }
