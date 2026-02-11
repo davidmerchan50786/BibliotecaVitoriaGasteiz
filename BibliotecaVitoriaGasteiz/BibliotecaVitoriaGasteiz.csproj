@@ -141,9 +141,6 @@
     <EmbeddedResource Include="vista\FormPrestamos.resx">
       <DependentUpon>FormPrestamos.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="Biblioteca.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="vista\FormUsuarios.resx">
       <DependentUpon>FormUsuarios.cs</DependentUpon>
     </EmbeddedResource>
@@ -173,7 +170,11 @@
       <Name>Biblioteca_BBDD</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Biblioteca.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
