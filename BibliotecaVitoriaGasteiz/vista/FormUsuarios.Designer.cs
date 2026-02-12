@@ -7,9 +7,7 @@ namespace BibliotecaVitoriaGasteiz.vista
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
@@ -35,10 +33,12 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.textBoxTelefono = new System.Windows.Forms.TextBox();
             this.labelPanelTelefono = new System.Windows.Forms.Label();
             this.tableLayoutPanelBotones = new System.Windows.Forms.TableLayoutPanel();
-            this.panelButtonAnadir = new System.Windows.Forms.Panel();
-            this.labelAnadir = new System.Windows.Forms.Label();
+            this.panelButtonGuardarUsuario = new System.Windows.Forms.Panel();
+            this.labelGuardarUsuario = new System.Windows.Forms.Label();
             this.panelButtonEditar = new System.Windows.Forms.Panel();
             this.labelEditar = new System.Windows.Forms.Label();
+            this.panelButtonEliminar = new System.Windows.Forms.Panel();
+            this.labelEliminar = new System.Windows.Forms.Label();
             this.labelListaUsuarios = new System.Windows.Forms.Label();
             this.dataGridViewUsuarios = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanelPrincipal.SuspendLayout();
@@ -50,8 +50,9 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelApellido2.SuspendLayout();
             this.panelTelefono.SuspendLayout();
             this.tableLayoutPanelBotones.SuspendLayout();
-            this.panelButtonAnadir.SuspendLayout();
+            this.panelButtonGuardarUsuario.SuspendLayout();
             this.panelButtonEditar.SuspendLayout();
+            this.panelButtonEliminar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewUsuarios)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,7 +90,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelBuscarBorder.Location = new System.Drawing.Point(98, 20);
             this.panelBuscarBorder.Margin = new System.Windows.Forms.Padding(0, 0, 0, 15);
             this.panelBuscarBorder.Name = "panelBuscarBorder";
-            this.panelBuscarBorder.Padding = new System.Windows.Forms.Padding(10, 15, 10, 10);
+            this.panelBuscarBorder.Padding = new System.Windows.Forms.Padding(10, 20, 10, 20);
             this.panelBuscarBorder.Size = new System.Drawing.Size(787, 65);
             this.panelBuscarBorder.TabIndex = 0;
             // 
@@ -100,7 +101,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.textBoxBuscarUsuario.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxBuscarUsuario.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.textBoxBuscarUsuario.ForeColor = System.Drawing.Color.White;
-            this.textBoxBuscarUsuario.Location = new System.Drawing.Point(10, 15);
+            this.textBoxBuscarUsuario.Location = new System.Drawing.Point(10, 20);
             this.textBoxBuscarUsuario.Name = "textBoxBuscarUsuario";
             this.textBoxBuscarUsuario.Size = new System.Drawing.Size(767, 22);
             this.textBoxBuscarUsuario.TabIndex = 0;
@@ -277,44 +278,47 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // tableLayoutPanelBotones
             // 
-            this.tableLayoutPanelBotones.ColumnCount = 2;
-            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelBotones.Controls.Add(this.panelButtonAnadir, 0, 0);
+            this.tableLayoutPanelBotones.ColumnCount = 3;
+            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tableLayoutPanelBotones.Controls.Add(this.panelButtonGuardarUsuario, 0, 0);
             this.tableLayoutPanelBotones.Controls.Add(this.panelButtonEditar, 1, 0);
+            this.tableLayoutPanelBotones.Controls.Add(this.panelButtonEliminar, 2, 0);
             this.tableLayoutPanelBotones.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelBotones.Location = new System.Drawing.Point(98, 260);
             this.tableLayoutPanelBotones.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
             this.tableLayoutPanelBotones.Name = "tableLayoutPanelBotones";
             this.tableLayoutPanelBotones.RowCount = 1;
-            this.tableLayoutPanelBotones.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelBotones.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanelBotones.Size = new System.Drawing.Size(787, 70);
             this.tableLayoutPanelBotones.TabIndex = 3;
             // 
-            // panelButtonAnadir
+            // panelButtonGuardarUsuario
             // 
-            this.panelButtonAnadir.BackColor = System.Drawing.Color.DarkCyan;
-            this.panelButtonAnadir.Controls.Add(this.labelAnadir);
-            this.panelButtonAnadir.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.panelButtonAnadir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelButtonAnadir.Location = new System.Drawing.Point(0, 0);
-            this.panelButtonAnadir.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.panelButtonAnadir.Name = "panelButtonAnadir";
-            this.panelButtonAnadir.Size = new System.Drawing.Size(383, 70);
-            this.panelButtonAnadir.TabIndex = 0;
+            this.panelButtonGuardarUsuario.BackColor = System.Drawing.Color.DarkCyan;
+            this.panelButtonGuardarUsuario.Controls.Add(this.labelGuardarUsuario);
+            this.panelButtonGuardarUsuario.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panelButtonGuardarUsuario.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelButtonGuardarUsuario.Location = new System.Drawing.Point(0, 0);
+            this.panelButtonGuardarUsuario.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
+            this.panelButtonGuardarUsuario.Name = "panelButtonGuardarUsuario";
+            this.panelButtonGuardarUsuario.Size = new System.Drawing.Size(257, 70);
+            this.panelButtonGuardarUsuario.TabIndex = 0;
             // 
-            // labelAnadir
+            // labelGuardarUsuario
             // 
-            this.labelAnadir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelAnadir.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.labelAnadir.ForeColor = System.Drawing.Color.White;
-            this.labelAnadir.Location = new System.Drawing.Point(0, 0);
-            this.labelAnadir.Name = "labelAnadir";
-            this.labelAnadir.Size = new System.Drawing.Size(383, 70);
-            this.labelAnadir.TabIndex = 0;
-            this.labelAnadir.Text = "Guardar";
-            this.labelAnadir.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelAnadir.Click += new System.EventHandler(this.labelAnadir_Click_Designer);
+            this.labelGuardarUsuario.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelGuardarUsuario.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.labelGuardarUsuario.ForeColor = System.Drawing.Color.White;
+            this.labelGuardarUsuario.Location = new System.Drawing.Point(0, 0);
+            this.labelGuardarUsuario.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
+            this.labelGuardarUsuario.Name = "labelGuardarUsuario";
+            this.labelGuardarUsuario.Size = new System.Drawing.Size(257, 70);
+            this.labelGuardarUsuario.TabIndex = 0;
+            this.labelGuardarUsuario.Text = "Guardar";
+            this.labelGuardarUsuario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelGuardarUsuario.Click += new System.EventHandler(this.labelAnadir_Click_Designer);
             // 
             // panelButtonEditar
             // 
@@ -322,23 +326,50 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelButtonEditar.Controls.Add(this.labelEditar);
             this.panelButtonEditar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.panelButtonEditar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelButtonEditar.Location = new System.Drawing.Point(403, 0);
-            this.panelButtonEditar.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.panelButtonEditar.Location = new System.Drawing.Point(277, 0);
+            this.panelButtonEditar.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
             this.panelButtonEditar.Name = "panelButtonEditar";
-            this.panelButtonEditar.Size = new System.Drawing.Size(384, 70);
+            this.panelButtonEditar.Size = new System.Drawing.Size(239, 70);
             this.panelButtonEditar.TabIndex = 1;
             // 
             // labelEditar
             // 
+            this.labelEditar.BackColor = System.Drawing.Color.Black;
             this.labelEditar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelEditar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.labelEditar.ForeColor = System.Drawing.Color.White;
+            this.labelEditar.ForeColor = System.Drawing.Color.Transparent;
             this.labelEditar.Location = new System.Drawing.Point(0, 0);
+            this.labelEditar.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
             this.labelEditar.Name = "labelEditar";
-            this.labelEditar.Size = new System.Drawing.Size(384, 70);
+            this.labelEditar.Size = new System.Drawing.Size(239, 70);
             this.labelEditar.TabIndex = 0;
-            this.labelEditar.Text = "Nuevo";
+            this.labelEditar.Text = "Editar";
             this.labelEditar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panelButtonEliminar
+            // 
+            this.panelButtonEliminar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.panelButtonEliminar.Controls.Add(this.labelEliminar);
+            this.panelButtonEliminar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panelButtonEliminar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelButtonEliminar.Location = new System.Drawing.Point(536, 0);
+            this.panelButtonEliminar.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.panelButtonEliminar.Name = "panelButtonEliminar";
+            this.panelButtonEliminar.Size = new System.Drawing.Size(251, 70);
+            this.panelButtonEliminar.TabIndex = 2;
+            // 
+            // labelEliminar
+            // 
+            this.labelEliminar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelEliminar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.labelEliminar.ForeColor = System.Drawing.Color.White;
+            this.labelEliminar.Location = new System.Drawing.Point(0, 0);
+            this.labelEliminar.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.labelEliminar.Name = "labelEliminar";
+            this.labelEliminar.Size = new System.Drawing.Size(251, 70);
+            this.labelEliminar.TabIndex = 0;
+            this.labelEliminar.Text = "Eliminar";
+            this.labelEliminar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelListaUsuarios
             // 
@@ -394,8 +425,9 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelTelefono.ResumeLayout(false);
             this.panelTelefono.PerformLayout();
             this.tableLayoutPanelBotones.ResumeLayout(false);
-            this.panelButtonAnadir.ResumeLayout(false);
+            this.panelButtonGuardarUsuario.ResumeLayout(false);
             this.panelButtonEditar.ResumeLayout(false);
+            this.panelButtonEliminar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewUsuarios)).EndInit();
             this.ResumeLayout(false);
 
@@ -404,27 +436,29 @@ namespace BibliotecaVitoriaGasteiz.vista
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelPrincipal;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelFila1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelFila2;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelBotones;
         private System.Windows.Forms.Panel panelBuscarBorder;
         private System.Windows.Forms.TextBox textBoxBuscarUsuario;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelFila1;
         private System.Windows.Forms.Panel panelNombre;
         private System.Windows.Forms.TextBox textBoxNombre;
         private System.Windows.Forms.Label labelPanelNombre;
         private System.Windows.Forms.Panel panelApellido1;
         private System.Windows.Forms.TextBox textBoxApellido1;
         private System.Windows.Forms.Label labelPanelApellido1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelFila2;
         private System.Windows.Forms.Panel panelApellido2;
         private System.Windows.Forms.TextBox textBoxApellido2;
         private System.Windows.Forms.Label labelPanelApellido2;
         private System.Windows.Forms.Panel panelTelefono;
         private System.Windows.Forms.TextBox textBoxTelefono;
         private System.Windows.Forms.Label labelPanelTelefono;
-        private System.Windows.Forms.Panel panelButtonAnadir;
-        private System.Windows.Forms.Label labelAnadir;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelBotones;
+        private System.Windows.Forms.Panel panelButtonGuardarUsuario;
+        private System.Windows.Forms.Label labelGuardarUsuario;
         private System.Windows.Forms.Panel panelButtonEditar;
         private System.Windows.Forms.Label labelEditar;
+        private System.Windows.Forms.Panel panelButtonEliminar;
+        private System.Windows.Forms.Label labelEliminar;
         private System.Windows.Forms.Label labelListaUsuarios;
         private System.Windows.Forms.DataGridView dataGridViewUsuarios;
     }

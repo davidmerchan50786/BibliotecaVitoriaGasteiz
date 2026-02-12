@@ -7,30 +7,30 @@ namespace BibliotecaVitoriaGasteiz.controlador
     /// <summary>
     /// Controlador principal del sistema - Patrón MVC
     /// 
-    /// Esta clase agrupa todos los controladores específicos (Libros, Usuarios, Préstamos)
-    /// siguiendo el patrón Modelo-Vista-Controlador que vimos en clase.
+    /// Esta clase actúa como "Fachada" o punto de entrada único para la lógica de negocio.
+    /// Coordina la comunicación entre las Vistas (Formularios) y los Modelos (Datos).
     /// 
-    /// Al principio me costó entender el patrón MVC, pero la idea es:
-    /// - MODELO: Gestiona los datos (clases Libro, Usuario, Prestamo y sus Repositorios)
-    /// - VISTA: Muestra la interfaz al usuario (FormLibros, FormUsuarios, FormPrestamos)
-    /// - CONTROLADOR: Coordina entre Modelo y Vista (esta clase)
+    /// RESPONSABILIDADES:
+    /// - Instanciar los controladores específicos (Libros, Usuarios, Préstamos).
+    /// - Delegar las peticiones de la interfaz al controlador correspondiente.
+    /// - Centralizar la lógica para que todos los formularios compartan la misma instancia.
     /// 
-    /// El Gestor (ventana principal) crea UNA instancia de este Controlador y la comparte
-    /// con todos los formularios para que todos trabajen con los mismos datos.
+    /// El Gestor (ventana principal) crea UNA instancia de este Controlador y la pasa
+    /// a los formularios hijos.
     /// 
     /// Desarrollador: David
     /// Proyecto: Gestión de biblioteca del Ayuntamiento de Vitoria-Gasteiz
-    /// Referencia: Apuntes de clase sobre MVC
     /// </summary>
     public class Controlador
     {
-        // Controladores específicos para cada entidad del sistema
+        // Instancias de los controladores específicos o repositorios
+        // En este diseño simplificado, instanciamos directamente los Repositorios/Controladores específicos
         private LibroControlador libroControlador;
         private UsuarioControlador usuarioControlador;
         private PrestamoControlador prestamoControlador;
 
         /// <summary>
-        /// Constructor: Inicializo los tres controladores específicos
+        /// Constructor: Inicializa los submódulos del sistema.
         /// </summary>
         public Controlador()
         {
@@ -39,72 +39,73 @@ namespace BibliotecaVitoriaGasteiz.controlador
             prestamoControlador = new PrestamoControlador();
         }
 
-        #region Métodos de Libros
-        // Todos estos métodos delegan el trabajo al LibroControlador
-        // Esta separación facilita el mantenimiento del código
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Métodos de Gestión de Libros
 
         /// <summary>
-        /// Inserta un nuevo libro en la base de datos
+        /// Registra un nuevo libro en el sistema.
+        /// 
+        /// NOTA SOBRE EL NOMBRE:
+        /// Este método se llama 'SumarLibro' para mantener la compatibilidad con el código
+        /// existente en FormLibros.cs (donde se llama así en el evento Click).
+        /// Internamente delega en 'Insertar'.
         /// </summary>
-        public void InsertarLibro(Libro libro)
+        /// <param name="libro">Objeto Libro con los datos a insertar.</param>
+        public void SumarLibro(Libro libro)
         {
             libroControlador.Insertar(libro);
         }
 
         /// <summary>
-        /// Modifica un libro existente
+        /// Actualiza los datos de un libro existente.
         /// </summary>
+        /// <param name="libro">Objeto Libro con los datos modificados e ID válido.</param>
         public void ModificarLibro(Libro libro)
         {
             libroControlador.Modificar(libro);
         }
 
         /// <summary>
-        /// Elimina un libro por su ID
+        /// Elimina un libro del catálogo.
         /// </summary>
+        /// <param name="id">Identificador del libro a borrar.</param>
         public void EliminarLibro(int id)
         {
             libroControlador.Eliminar(id);
         }
 
         /// <summary>
-        /// Obtiene todos los libros de la biblioteca
+        /// Recupera el listado completo de libros.
         /// </summary>
+        /// <returns>DataTable para enlazar al DataGridView.</returns>
         public DataTable ObtenerLibros()
         {
             return libroControlador.ObtenerTodos();
         }
 
         /// <summary>
-        /// Obtiene solo los libros disponibles para préstamo (Disponible = 1)
-        /// Usado en el ComboBox de FormPrestamos
+        /// Recupera solo los libros que están disponibles para ser prestados.
+        /// Utilizado para llenar el ComboBox en la pantalla de Préstamos.
         /// </summary>
+        /// <returns>DataTable filtrado por Disponible=1.</returns>
         public DataTable ObtenerLibrosDisponibles()
         {
             return libroControlador.ObtenerDisponibles();
         }
 
         /// <summary>
-        /// Busca un libro específico por su ID
-        /// Usado en FormDetalleLibro para mostrar la información completa
+        /// Busca libros que coincidan con un criterio de búsqueda (Título o Autor).
         /// </summary>
-        public DataTable BuscarLibroPorId(int id)
-        {
-            return libroControlador.BuscarPorId(id);
-        }
-
-        /// <summary>
-        /// Busca libros que coincidan con el término de búsqueda
-        /// Busca tanto en el título como en el nombre del escritor
-        /// </summary>
+        /// <param name="termino">Texto introducido por el usuario.</param>
+        /// <returns>DataTable con los resultados.</returns>
         public DataTable BuscarLibros(string termino)
         {
             return libroControlador.Buscar(termino);
         }
 
         /// <summary>
-        /// Cambia la disponibilidad de un libro (disponible/prestado)
-        /// Se llama automáticamente al realizar o devolver un préstamo
+        /// Cambia el estado de un libro (Prestado/Disponible).
+        /// Se invoca automáticamente desde la lógica de préstamos.
         /// </summary>
         public void CambiarDisponibilidadLibro(int id, bool disponible)
         {
@@ -113,11 +114,11 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         #endregion
 
-        #region Métodos de Usuarios
-        // Métodos para gestionar usuarios de la biblioteca
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Métodos de Gestión de Usuarios
 
         /// <summary>
-        /// Inserta un nuevo usuario
+        /// Registra un nuevo usuario (lector) en la biblioteca.
         /// </summary>
         public void InsertarUsuario(Usuario usuario)
         {
@@ -125,7 +126,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Modifica un usuario existente
+        /// Actualiza los datos de un usuario existente.
         /// </summary>
         public void ModificarUsuario(Usuario usuario)
         {
@@ -133,7 +134,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Elimina un usuario por su ID
+        /// Da de baja a un usuario del sistema.
         /// </summary>
         public void EliminarUsuario(int id)
         {
@@ -141,7 +142,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Obtiene todos los usuarios registrados
+        /// Obtiene la lista completa de usuarios.
         /// </summary>
         public DataTable ObtenerUsuarios()
         {
@@ -149,9 +150,8 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Alias de ObtenerUsuarios() - Lo necesito en FormPrestamos
-        /// Creé este método adicional porque el ComboBox de usuarios
-        /// llamaba a este nombre específicamente
+        /// Alias para ObtenerUsuarios().
+        /// Mantenido por compatibilidad con llamadas específicas desde FormPrestamos.
         /// </summary>
         public DataTable ObtenerTodosUsuarios()
         {
@@ -159,16 +159,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Busca un usuario específico por su ID
-        /// </summary>
-        public DataTable BuscarUsuarioPorId(int id)
-        {
-            return usuarioControlador.BuscarPorId(id);
-        }
-
-        /// <summary>
-        /// Busca usuarios que coincidan con el término
-        /// Busca en nombre, apellido_1 y apellido_2
+        /// Busca usuarios por nombre o apellidos.
         /// </summary>
         public DataTable BuscarUsuarios(string termino)
         {
@@ -176,7 +167,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Busca un usuario por su número de teléfono
+        /// Busca un usuario por su número de teléfono.
         /// </summary>
         public DataTable BuscarUsuarioPorTelefono(int telefono)
         {
@@ -185,27 +176,22 @@ namespace BibliotecaVitoriaGasteiz.controlador
 
         #endregion
 
-        #region Métodos de Préstamos
-        // La lógica de préstamos fue la parte que más me gustó desarrollar
-        // Gestiona todo el ciclo: prestar libro -> marcar como no disponible -> devolver -> volver a disponible
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Métodos de Gestión de Préstamos
 
         /// <summary>
-        /// Realiza un préstamo recibiendo un objeto Prestamo completo
+        /// Registra un nuevo préstamo.
+        /// Internamente también marca el libro como NO disponible.
         /// </summary>
+        /// <param name="prestamo">Objeto Prestamo completo.</param>
         public void RealizarPrestamo(Prestamo prestamo)
         {
             prestamoControlador.RealizarPrestamo(prestamo);
         }
 
         /// <summary>
-        /// SOBRECARGA: Realiza un préstamo con parámetros individuales
-        /// 
-        /// Creé esta sobrecarga porque en FormPrestamos tengo los datos por separado
-        /// (usuario seleccionado, libro seleccionado, fechas de los DateTimePickers)
-        /// y es más cómodo pasarlos así que crear el objeto Prestamo manualmente.
-        /// 
-        /// Aquí convierto los DateTime a string en formato dd/MM/yyyy porque
-        /// en la BD guardo las fechas como texto (lo vi en los apuntes de SQLite)
+        /// Sobrecarga: Facilita crear un préstamo pasando datos sueltos.
+        /// Convierte las fechas de DateTime a String (formato ISO) para SQLite.
         /// </summary>
         public void RealizarPrestamo(int idUsuario, int idLibro, DateTime fechaInicio, DateTime fechaFin)
         {
@@ -213,15 +199,15 @@ namespace BibliotecaVitoriaGasteiz.controlador
             {
                 IdUsuario = idUsuario,
                 IdLibro = idLibro,
-                FechaInicio = fechaInicio.ToString("dd/MM/yyyy"),
-                FechaFin = fechaFin.ToString("dd/MM/yyyy")
+                FechaInicio = fechaInicio.ToString("yyyy-MM-dd"), // Formato estándar SQL
+                FechaFin = fechaFin.ToString("yyyy-MM-dd")
             };
             prestamoControlador.RealizarPrestamo(prestamo);
         }
 
         /// <summary>
-        /// Devuelve un libro prestado
-        /// Actualiza la fecha de fin del préstamo y marca el libro como disponible
+        /// Registra la devolución de un libro.
+        /// Internamente actualiza la fecha de fin y marca el libro como DISPONIBLE.
         /// </summary>
         public void DevolverLibro(int idPrestamo)
         {
@@ -229,16 +215,7 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Modifica un préstamo existente
-        /// </summary>
-        public void ModificarPrestamo(Prestamo prestamo)
-        {
-            prestamoControlador.Modificar(prestamo);
-        }
-
-        /// <summary>
-        /// Elimina un préstamo
-        /// También devuelve el libro (lo marca como disponible) si estaba prestado
+        /// Elimina un registro de préstamo (gestión administrativa).
         /// </summary>
         public void EliminarPrestamo(int id)
         {
@@ -246,46 +223,11 @@ namespace BibliotecaVitoriaGasteiz.controlador
         }
 
         /// <summary>
-        /// Obtiene todos los préstamos registrados
+        /// Obtiene el historial completo de préstamos.
         /// </summary>
         public DataTable ObtenerPrestamos()
         {
             return prestamoControlador.ObtenerTodos();
-        }
-
-        /// <summary>
-        /// Obtiene solo los préstamos activos (libros actualmente prestados)
-        /// Se usa en FormPrestamos para mostrar la tabla de préstamos en curso
-        /// </summary>
-        public DataTable ObtenerPrestamosActivos()
-        {
-            return prestamoControlador.ObtenerActivos();
-        }
-
-        /// <summary>
-        /// Busca un préstamo específico por su ID
-        /// </summary>
-        public DataTable BuscarPrestamoPorId(int id)
-        {
-            return prestamoControlador.BuscarPorId(id);
-        }
-
-        /// <summary>
-        /// Busca todos los préstamos de un libro específico
-        /// Útil para ver el historial de préstamos de un libro
-        /// </summary>
-        public DataTable BuscarPrestamosPorLibro(int idLibro)
-        {
-            return prestamoControlador.BuscarPorLibro(idLibro);
-        }
-
-        /// <summary>
-        /// Busca todos los préstamos de un usuario específico
-        /// Útil para ver el historial de préstamos de un usuario
-        /// </summary>
-        public DataTable BuscarPrestamosPorUsuario(int idUsuario)
-        {
-            return prestamoControlador.BuscarPorUsuario(idUsuario);
         }
 
         #endregion

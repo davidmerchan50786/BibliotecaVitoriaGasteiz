@@ -99,6 +99,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelFila1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanelFila1.Controls.Add(this.panelUsuario, 0, 0);
             this.tableLayoutPanelFila1.Controls.Add(this.panelLibro, 1, 0);
+            this.tableLayoutPanelFila1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelFila1.Location = new System.Drawing.Point(98, 80);
             this.tableLayoutPanelFila1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
             this.tableLayoutPanelFila1.Name = "tableLayoutPanelFila1";
@@ -155,6 +156,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelFila2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.5F));
             this.tableLayoutPanelFila2.Controls.Add(this.panelFechaInicio, 0, 0);
             this.tableLayoutPanelFila2.Controls.Add(this.panelFechaFin, 1, 0);
+            this.tableLayoutPanelFila2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelFila2.Location = new System.Drawing.Point(98, 160);
             this.tableLayoutPanelFila2.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
             this.tableLayoutPanelFila2.Name = "tableLayoutPanelFila2";

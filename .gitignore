@@ -21,8 +21,8 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
+# x64/  <-- COMENTADO: Queremos subir la carpeta x64 manual
+# x86/  <-- COMENTADO: Queremos subir la carpeta x86 manual
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
@@ -197,7 +197,7 @@ PublishScripts/
 # NuGet Symbol Packages
 *.snupkg
 # The packages folder can be ignored because of Package Restore
-**/[Pp]ackages/*
+# **/[Pp]ackages/* <-- COMENTADO: QUEREMOS SUBIR LOS PAQUETES NUGET
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
@@ -361,3 +361,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# ========================================================
+# REGLAS PERSONALIZADAS PARA SUBIR LIBRERÍAS Y BASE DE DATOS
+# ========================================================
+!packages/
+!*.db
+!*.dll
+!*.sqlite
+!x86/
+!x64/
