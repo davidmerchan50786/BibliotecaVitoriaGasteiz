@@ -23,6 +23,9 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelUsuario = new System.Windows.Forms.Panel();
             this.comboBoxUsuarios = new System.Windows.Forms.ComboBox();
             this.labelUsuario = new System.Windows.Forms.Label();
+            this.panelLibro = new System.Windows.Forms.Panel();
+            this.comboBoxLibros = new System.Windows.Forms.ComboBox();
+            this.labelLibro = new System.Windows.Forms.Label();
             this.tableLayoutPanelFila2 = new System.Windows.Forms.TableLayoutPanel();
             this.panelFechaInicio = new System.Windows.Forms.Panel();
             this.dateTimePickerInicio = new System.Windows.Forms.DateTimePicker();
@@ -33,24 +36,24 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelBotones = new System.Windows.Forms.TableLayoutPanel();
             this.panelButtonPrestar = new System.Windows.Forms.Panel();
             this.labelPrestar = new System.Windows.Forms.Label();
+            this.panelButtonLimpiar = new System.Windows.Forms.Panel();
+            this.labelLimpiar = new System.Windows.Forms.Label();
             this.panelButtonDevolver = new System.Windows.Forms.Panel();
             this.labelDevolver = new System.Windows.Forms.Label();
             this.labelPrestamosActivos = new System.Windows.Forms.Label();
             this.dataGridViewPrestamos = new System.Windows.Forms.DataGridView();
-            this.labelLibro = new System.Windows.Forms.Label();
-            this.comboBoxLibros = new System.Windows.Forms.ComboBox();
-            this.panelLibro = new System.Windows.Forms.Panel();
             this.tableLayoutPanelPrincipal.SuspendLayout();
             this.tableLayoutPanelFila1.SuspendLayout();
             this.panelUsuario.SuspendLayout();
+            this.panelLibro.SuspendLayout();
             this.tableLayoutPanelFila2.SuspendLayout();
             this.panelFechaInicio.SuspendLayout();
             this.panelFechaFin.SuspendLayout();
             this.tableLayoutPanelBotones.SuspendLayout();
             this.panelButtonPrestar.SuspendLayout();
+            this.panelButtonLimpiar.SuspendLayout();
             this.panelButtonDevolver.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrestamos)).BeginInit();
-            this.panelLibro.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanelPrincipal
@@ -123,7 +126,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // comboBoxUsuarios
             // 
-            this.comboBoxUsuarios.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.comboBoxUsuarios.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxUsuarios.BackColor = System.Drawing.Color.WhiteSmoke;
             this.comboBoxUsuarios.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -137,7 +140,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // labelUsuario
             // 
-            this.labelUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.labelUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelUsuario.AutoSize = true;
             this.labelUsuario.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -146,6 +149,45 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelUsuario.Size = new System.Drawing.Size(61, 15);
             this.labelUsuario.TabIndex = 0;
             this.labelUsuario.Text = "USUARIO";
+            // 
+            // panelLibro
+            // 
+            this.panelLibro.BackColor = System.Drawing.Color.White;
+            this.panelLibro.Controls.Add(this.comboBoxLibros);
+            this.panelLibro.Controls.Add(this.labelLibro);
+            this.panelLibro.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLibro.Location = new System.Drawing.Point(403, 0);
+            this.panelLibro.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.panelLibro.Name = "panelLibro";
+            this.panelLibro.Padding = new System.Windows.Forms.Padding(10);
+            this.panelLibro.Size = new System.Drawing.Size(384, 70);
+            this.panelLibro.TabIndex = 1;
+            // 
+            // comboBoxLibros
+            // 
+            this.comboBoxLibros.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxLibros.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.comboBoxLibros.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLibros.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxLibros.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.comboBoxLibros.FormattingEnabled = true;
+            this.comboBoxLibros.Location = new System.Drawing.Point(10, 29);
+            this.comboBoxLibros.Name = "comboBoxLibros";
+            this.comboBoxLibros.Size = new System.Drawing.Size(361, 28);
+            this.comboBoxLibros.TabIndex = 1;
+            // 
+            // labelLibro
+            // 
+            this.labelLibro.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelLibro.AutoSize = true;
+            this.labelLibro.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.labelLibro.Location = new System.Drawing.Point(10, 7);
+            this.labelLibro.Name = "labelLibro";
+            this.labelLibro.Size = new System.Drawing.Size(122, 15);
+            this.labelLibro.TabIndex = 0;
+            this.labelLibro.Text = "LIBRO (DISPONIBLE)";
             // 
             // tableLayoutPanelFila2
             // 
@@ -180,7 +222,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // dateTimePickerInicio
             // 
-            this.dateTimePickerInicio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dateTimePickerInicio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dateTimePickerInicio.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.dateTimePickerInicio.Format = System.Windows.Forms.DateTimePickerFormat.Short;
@@ -191,7 +233,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // labelFechaInicio
             // 
-            this.labelFechaInicio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.labelFechaInicio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelFechaInicio.AutoSize = true;
             this.labelFechaInicio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -216,7 +258,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // dateTimePickerFin
             // 
-            this.dateTimePickerFin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dateTimePickerFin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dateTimePickerFin.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.dateTimePickerFin.Format = System.Windows.Forms.DateTimePickerFormat.Short;
@@ -227,7 +269,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // labelFechaFin
             // 
-            this.labelFechaFin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.labelFechaFin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelFechaFin.AutoSize = true;
             this.labelFechaFin.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -239,17 +281,19 @@ namespace BibliotecaVitoriaGasteiz.vista
             // 
             // tableLayoutPanelBotones
             // 
-            this.tableLayoutPanelBotones.ColumnCount = 2;
-            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelBotones.ColumnCount = 3;
+            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tableLayoutPanelBotones.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
             this.tableLayoutPanelBotones.Controls.Add(this.panelButtonPrestar, 0, 0);
-            this.tableLayoutPanelBotones.Controls.Add(this.panelButtonDevolver, 1, 0);
+            this.tableLayoutPanelBotones.Controls.Add(this.panelButtonLimpiar, 1, 0);
+            this.tableLayoutPanelBotones.Controls.Add(this.panelButtonDevolver, 2, 0);
             this.tableLayoutPanelBotones.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelBotones.Location = new System.Drawing.Point(98, 240);
             this.tableLayoutPanelBotones.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
             this.tableLayoutPanelBotones.Name = "tableLayoutPanelBotones";
             this.tableLayoutPanelBotones.RowCount = 1;
-            this.tableLayoutPanelBotones.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanelBotones.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanelBotones.Size = new System.Drawing.Size(787, 70);
             this.tableLayoutPanelBotones.TabIndex = 3;
             // 
@@ -262,7 +306,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelButtonPrestar.Location = new System.Drawing.Point(0, 0);
             this.panelButtonPrestar.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
             this.panelButtonPrestar.Name = "panelButtonPrestar";
-            this.panelButtonPrestar.Size = new System.Drawing.Size(383, 70);
+            this.panelButtonPrestar.Size = new System.Drawing.Size(257, 70);
             this.panelButtonPrestar.TabIndex = 0;
             // 
             // labelPrestar
@@ -272,23 +316,46 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelPrestar.ForeColor = System.Drawing.Color.White;
             this.labelPrestar.Location = new System.Drawing.Point(0, 0);
             this.labelPrestar.Name = "labelPrestar";
-            this.labelPrestar.Size = new System.Drawing.Size(383, 70);
+            this.labelPrestar.Size = new System.Drawing.Size(257, 70);
             this.labelPrestar.TabIndex = 0;
             this.labelPrestar.Text = "Realizar Préstamo";
             this.labelPrestar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelPrestar.Click += new System.EventHandler(this.BtnRealizarPrestamo_Click);
+            // 
+            // panelButtonLimpiar
+            // 
+            this.panelButtonLimpiar.BackColor = System.Drawing.Color.Black;
+            this.panelButtonLimpiar.Controls.Add(this.labelLimpiar);
+            this.panelButtonLimpiar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panelButtonLimpiar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelButtonLimpiar.Location = new System.Drawing.Point(277, 0);
+            this.panelButtonLimpiar.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.panelButtonLimpiar.Name = "panelButtonLimpiar";
+            this.panelButtonLimpiar.Size = new System.Drawing.Size(239, 70);
+            this.panelButtonLimpiar.TabIndex = 1;
+            // 
+            // labelLimpiar
+            // 
+            this.labelLimpiar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelLimpiar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.labelLimpiar.ForeColor = System.Drawing.Color.White;
+            this.labelLimpiar.Location = new System.Drawing.Point(0, 0);
+            this.labelLimpiar.Name = "labelLimpiar";
+            this.labelLimpiar.Size = new System.Drawing.Size(239, 70);
+            this.labelLimpiar.TabIndex = 0;
+            this.labelLimpiar.Text = "Limpiar";
+            this.labelLimpiar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panelButtonDevolver
             // 
-            this.panelButtonDevolver.BackColor = System.Drawing.Color.Black;
+            this.panelButtonDevolver.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
             this.panelButtonDevolver.Controls.Add(this.labelDevolver);
             this.panelButtonDevolver.Cursor = System.Windows.Forms.Cursors.Hand;
             this.panelButtonDevolver.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelButtonDevolver.Location = new System.Drawing.Point(403, 0);
+            this.panelButtonDevolver.Location = new System.Drawing.Point(536, 0);
             this.panelButtonDevolver.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
             this.panelButtonDevolver.Name = "panelButtonDevolver";
-            this.panelButtonDevolver.Size = new System.Drawing.Size(384, 70);
-            this.panelButtonDevolver.TabIndex = 1;
+            this.panelButtonDevolver.Size = new System.Drawing.Size(251, 70);
+            this.panelButtonDevolver.TabIndex = 2;
             // 
             // labelDevolver
             // 
@@ -297,11 +364,10 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelDevolver.ForeColor = System.Drawing.Color.White;
             this.labelDevolver.Location = new System.Drawing.Point(0, 0);
             this.labelDevolver.Name = "labelDevolver";
-            this.labelDevolver.Size = new System.Drawing.Size(384, 70);
+            this.labelDevolver.Size = new System.Drawing.Size(251, 70);
             this.labelDevolver.TabIndex = 0;
-            this.labelDevolver.Text = "Devolver Libro Seleccionado";
+            this.labelDevolver.Text = "Devolver Seleccionado";
             this.labelDevolver.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelDevolver.Click += new System.EventHandler(this.BtnDevolver_Click);
             // 
             // labelPrestamosActivos
             // 
@@ -330,45 +396,6 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.dataGridViewPrestamos.Size = new System.Drawing.Size(781, 269);
             this.dataGridViewPrestamos.TabIndex = 5;
             // 
-            // labelLibro
-            // 
-            this.labelLibro.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelLibro.AutoSize = true;
-            this.labelLibro.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.labelLibro.Location = new System.Drawing.Point(10, 7);
-            this.labelLibro.Name = "labelLibro";
-            this.labelLibro.Size = new System.Drawing.Size(122, 15);
-            this.labelLibro.TabIndex = 0;
-            this.labelLibro.Text = "LIBRO (DISPONIBLE)";
-            // 
-            // comboBoxLibros
-            // 
-            this.comboBoxLibros.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxLibros.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.comboBoxLibros.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxLibros.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.comboBoxLibros.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.comboBoxLibros.FormattingEnabled = true;
-            this.comboBoxLibros.Location = new System.Drawing.Point(10, 29);
-            this.comboBoxLibros.Name = "comboBoxLibros";
-            this.comboBoxLibros.Size = new System.Drawing.Size(361, 28);
-            this.comboBoxLibros.TabIndex = 1;
-            // 
-            // panelLibro
-            // 
-            this.panelLibro.BackColor = System.Drawing.Color.White;
-            this.panelLibro.Controls.Add(this.comboBoxLibros);
-            this.panelLibro.Controls.Add(this.labelLibro);
-            this.panelLibro.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelLibro.Location = new System.Drawing.Point(403, 0);
-            this.panelLibro.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.panelLibro.Name = "panelLibro";
-            this.panelLibro.Padding = new System.Windows.Forms.Padding(10);
-            this.panelLibro.Size = new System.Drawing.Size(384, 70);
-            this.panelLibro.TabIndex = 1;
-            // 
             // FormPrestamos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -385,6 +412,8 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelFila1.ResumeLayout(false);
             this.panelUsuario.ResumeLayout(false);
             this.panelUsuario.PerformLayout();
+            this.panelLibro.ResumeLayout(false);
+            this.panelLibro.PerformLayout();
             this.tableLayoutPanelFila2.ResumeLayout(false);
             this.panelFechaInicio.ResumeLayout(false);
             this.panelFechaInicio.PerformLayout();
@@ -392,10 +421,9 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelFechaFin.PerformLayout();
             this.tableLayoutPanelBotones.ResumeLayout(false);
             this.panelButtonPrestar.ResumeLayout(false);
+            this.panelButtonLimpiar.ResumeLayout(false);
             this.panelButtonDevolver.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrestamos)).EndInit();
-            this.panelLibro.ResumeLayout(false);
-            this.panelLibro.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -418,6 +446,8 @@ namespace BibliotecaVitoriaGasteiz.vista
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelBotones;
         private System.Windows.Forms.Panel panelButtonPrestar;
         private System.Windows.Forms.Label labelPrestar;
+        private System.Windows.Forms.Panel panelButtonLimpiar;
+        private System.Windows.Forms.Label labelLimpiar;
         private System.Windows.Forms.Panel panelButtonDevolver;
         private System.Windows.Forms.Label labelDevolver;
         private System.Windows.Forms.Label labelPrestamosActivos;

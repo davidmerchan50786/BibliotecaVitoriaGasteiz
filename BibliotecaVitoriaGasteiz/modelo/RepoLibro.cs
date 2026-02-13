@@ -6,26 +6,18 @@ using Biblioteca_BBDD;
 namespace BibliotecaVitoriaGasteiz.modelo
 {
     /// <summary>
-    /// Repositorio de Libros - Capa de Acceso a Datos (DAL)
+    /// Repositorio de Libros - Capa de Acceso a Datos
     /// 
     /// Esta clase es la ÚNICA responsable de ejecutar sentencias SQL contra la tabla 'Libros'.
     /// Sigue el principio de Responsabilidad Única (SRP).
-    /// 
-    /// ESTRUCTURA DE LA TABLA LIBROS EN SQLITE:
-    /// - ID (INTEGER PRIMARY KEY)
-    /// - Titulo (TEXT)
-    /// - Escritor (TEXT)
-    /// - Ano_Edicion (INTEGER)
-    /// - Sinopsis (TEXT)
-    /// - Disponible (INTEGER: 1=True, 0=False)
     /// 
     /// NOTA TÉCNICA:
     /// SQLite no tiene tipo booleano nativo. Convertimos:
     /// - C# true  -> SQLite 1
     /// - C# false -> SQLite 0
     /// 
-    /// Desarrollador: David
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria-Gasteiz
     /// </summary>
     public class RepositorioLibro
     {
@@ -35,7 +27,7 @@ namespace BibliotecaVitoriaGasteiz.modelo
         /// <param name="libro">Objeto Libro con los datos a guardar.</param>
         public void Insertar(Libro libro)
         {
-            // SQL corregido: Usamos los nombres reales de las columnas (Ano_Edicion)
+            // Usamos los nombres reales de las columnas
             string sql = "INSERT INTO Libros (Titulo, Escritor, Ano_Edicion, Sinopsis, Disponible) VALUES (@titulo, @escritor, @anoEdicion, @sinopsis, @disponible)";
 
             SQLiteCommand cmd = new SQLiteCommand(sql);

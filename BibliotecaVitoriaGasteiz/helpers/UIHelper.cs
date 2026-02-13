@@ -1,124 +1,106 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace BibliotecaVitoriaGasteiz.helpers
 {
     /// <summary>
-    /// Clase auxiliar estática para la personalización de la Interfaz de Usuario (UI).
+    /// Clase estática UIHelper.
     /// 
-    /// OBJETIVO:
-    /// Centralizar la lógica visual repetitiva para cumplir con el principio DRY (Don't Repeat Yourself).
-    /// Se encarga de dibujar bordes redondeados y gestionar placeholders, evitando
-    /// ensuciar el código de los formularios principales.
+    /// Creé esta clase para centralizar toda la magia gráfica
+    /// Aquí gestiono el GDI+ para dibujar curvas perfectas y la lógica matemática para que 
+    /// los controles se estiren (responsividad) sin que se rompa la interfaz.
     /// 
-    /// TECNOLOGÍA:
-    /// Utiliza GDI+ (System.Drawing) para redibujar los controles de Windows Forms,
-    /// permitiendo un aspecto "Modern UI" en una tecnología clásica.
-    /// 
-    /// Desarrollador: David
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria-Gasteiz
     /// </summary>
     public static class UIHelper
     {
         /// <summary>
-        /// Dibuja un borde redondeado suave alrededor de un control (Panel, Botón, etc.).
-        /// 
-        /// CÓMO FUNCIONA:
-        /// 1. Usa 'AntiAlias' para que las curvas no se vean pixeladas (dientes de sierra).
-        /// 2. 'Borra' las esquinas originales pintándolas del color del fondo padre.
-        /// 3. Crea un 'GraphicsPath' (un camino vectorial) con 4 arcos.
-        /// 4. Rellena ese camino y opcionalmente dibuja el contorno.
+        /// Crea la figura geométrica de un rectángulo con las esquinas curvas.
         /// </summary>
-        /// <param name="sender">El control que dispara el evento Paint (se hace cast a Control).</param>
-        /// <param name="e">Argumentos del evento Paint que contienen el objeto Graphics.</param>
-        /// <param name="radio">El radio de la curva (ej: 20 para botones muy redondos, 10 para sutiles).</param>
-        /// <param name="colorBorde">El color de la línea. Si es Color.Transparent, no dibuja línea (solo forma).</param>
-        public static void DibujarBordeRedondeado(object sender, PaintEventArgs e, int radio, Color colorBorde)
+        public static GraphicsPath ObtenerRutaRedondeada(Rectangle rect, int radio)
         {
-            Control control = (Control)sender;
-
-            // Esto evita el parpadeo y los saltos al estirar
-            typeof(Control).GetProperty("DoubleBuffered",
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Instance)
-                ?.SetValue(control, true);
-
-            // Habilitar suavizado para calidad alta (evita píxeles en las curvas)
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-            // TRUCO VISUAL:
-            // Limpiamos las esquinas con el color del contenedor padre.
-            // Si no hacemos esto, se ven las esquinas blancas/grises cuadradas detrás de la curva.
-            var colorFondo = control.Parent != null ? control.Parent.BackColor : Color.White;
-            e.Graphics.Clear(colorFondo);
-
-            // Definimos el rectángulo y el camino gráfico
-            Rectangle rect = new Rectangle(0, 0, control.Width - 1, control.Height - 1);
             GraphicsPath path = new GraphicsPath();
+            float curveSize = radio * 2F;
 
-            // Dibujamos los 4 arcos matemáticamente
-            path.AddArc(rect.X, rect.Y, radio, radio, 180, 90);                 // Arriba Izquierda
-            path.AddArc(rect.Right - radio, rect.Y, radio, radio, 270, 90);     // Arriba Derecha
-            path.AddArc(rect.Right - radio, rect.Bottom - radio, radio, radio, 0, 90); // Abajo Derecha
-            path.AddArc(rect.X, rect.Bottom - radio, radio, radio, 90, 90);     // Abajo Izquierda
+            path.StartFigure();
+            path.AddArc(rect.X, rect.Y, curveSize, curveSize, 180, 90);
+            path.AddArc(rect.Right - curveSize, rect.Y, curveSize, curveSize, 270, 90);
+            path.AddArc(rect.Right - curveSize, rect.Bottom - curveSize, curveSize, curveSize, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - curveSize, curveSize, curveSize, 90, 90);
             path.CloseFigure();
 
-            // 1. Rellenamos el interior con el color de fondo del propio control (Blanco, Negro, Cyan...)
-            using (SolidBrush brush = new SolidBrush(control.BackColor))
-            {
-                e.Graphics.FillPath(brush, path);
-            }
-
-            // 2. Dibujamos el borde (solo si no se pidió transparente)
-            if (colorBorde != Color.Transparent)
-            {
-                using (Pen pen = new Pen(colorBorde, 1)) // Grosor de 1px
-                {
-                    e.Graphics.DrawPath(pen, path);
-                }
-            }
+            return path;
         }
 
         /// <summary>
-        /// Agrega funcionalidad de "Placeholder" (texto fantasma) a un TextBox.
-        /// 
-        /// UX (Experiencia de Usuario):
-        /// Muestra un texto gris cuando el campo está vacío para indicar qué debe escribir el usuario.
-        /// Al hacer clic (Enter), el texto desaparece. Al salir (Leave), si está vacío, vuelve a aparecer.
+        /// Recorta un panel para hacerlo redondo y le quita los "dientes de sierra" (AntiAlias).
         /// </summary>
-        /// <param name="textBox">La caja de texto a configurar.</param>
-        /// <param name="placeholder">El texto guía (ej: "Buscar usuario...").</param>
-        public static void SetPlaceholder(TextBox textBox, string placeholder)
+        public static void DibujarBordeRedondeado(object sender, PaintEventArgs e, int radio, Color colorBorde)
         {
-            // Estado inicial
-            textBox.Text = placeholder;
-            textBox.ForeColor = Color.Gray;
-
-            // Evento ENTER: Cuando el usuario hace clic o entra con tabulador
-            textBox.Enter += (sender, e) =>
+            try
             {
-                if (textBox.Text == placeholder)
-                {
-                    textBox.Text = "";
-                    textBox.ForeColor = Color.White; // Color normal de escritura (Blanco sobre fondo negro en buscadores)
+                Control control = sender as Control;
+                if (control == null) return;
 
-                    // NOTA: Si el textbox es blanco (inputs normales), cambiar a Color.Black
-                    if (textBox.BackColor == Color.White)
-                        textBox.ForeColor = Color.Black;
+                // Suavizamos los bordes para que no se vean pixelados
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                Rectangle rect = new Rectangle(0, 0, control.Width - 1, control.Height - 1);
+
+                using (GraphicsPath path = ObtenerRutaRedondeada(rect, radio))
+                {
+                    // Esto es vital: recorta FÍSICAMENTE el control. Si haces clic en la esquina
+                    // transparente, el clic lo recibe el fondo, no el botón.
+                    control.Region = new Region(path);
+
+                    using (SolidBrush brush = new SolidBrush(control.BackColor))
+                    {
+                        e.Graphics.FillPath(brush, path);
+                    }
+
+                    if (colorBorde != Color.Transparent)
+                    {
+                        using (Pen pen = new Pen(colorBorde, 2))
+                        {
+                            e.Graphics.DrawPath(pen, path);
+                        }
+                    }
                 }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// LA BATALLA DE LA RESPONSIVIDAD:
+        /// El Diseñador de Visual Studio me volvía loco con los anclajes (Anchors), así que decidí
+        /// hacerlo por código. Este método coge cualquier buscador de la app, lo estira y lo centra.
+        /// </summary>
+        public static void HacerBuscadorResponsivo(Panel panelBorde, TextBox txtBuscador, int margenLateral = 20)
+        {
+            panelBorde.Dock = DockStyle.Fill; // El panel manda y ocupa todo el ancho
+
+            txtBuscador.Dock = DockStyle.None;
+            txtBuscador.Anchor = AnchorStyles.Left | AnchorStyles.Right; // TextBox de goma
+
+            Action centrarBuscador = () =>
+            {
+                if (panelBorde.Width > margenLateral * 2)
+                {
+                    txtBuscador.Width = panelBorde.Width - (margenLateral * 2);
+                    txtBuscador.Left = margenLateral;
+                }
+                txtBuscador.Top = (panelBorde.Height - txtBuscador.Height) / 2; // Centrado vertical exacto
             };
 
-            // Evento LEAVE: Cuando el usuario se va a otro control
-            textBox.Leave += (sender, e) =>
+            centrarBuscador();
+
+            // Cada vez que la ventana cambie de tamaño, re-centramos y repintamos para no deformar curvas
+            panelBorde.Resize += (s, e) =>
             {
-                if (string.IsNullOrWhiteSpace(textBox.Text))
-                {
-                    textBox.Text = placeholder;
-                    textBox.ForeColor = Color.Gray; // Color atenuado
-                }
+                centrarBuscador();
+                panelBorde.Invalidate();
             };
         }
     }

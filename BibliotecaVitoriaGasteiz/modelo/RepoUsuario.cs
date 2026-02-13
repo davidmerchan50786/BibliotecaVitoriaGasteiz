@@ -17,27 +17,17 @@ namespace BibliotecaVitoriaGasteiz.modelo
     /// strings directamente en el SQL. Esto previene inyección SQL y es una
     /// buena práctica que vi en la documentación de Microsoft.
     /// 
-    /// Al principio SQLite me dio problemas, pero aprendí que es más sencillo
-    /// de lo que parece si usas bien los parámetros.
-    /// 
-    /// Desarrollador: David
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria-Gasteiz
     /// </summary>
     public class RepositorioUsuario
     {
         /// <summary>
         /// Inserta un nuevo usuario en la base de datos
-        /// 
-        /// ESTRUCTURA DE LA TABLA USUARIOS:
-        /// - ID: INTEGER PRIMARY KEY (se genera automáticamente)
-        /// - Nombre: TEXT NOT NULL
-        /// - Apellido_1: TEXT NOT NULL
-        /// - Apellido_2: TEXT (puede ser NULL)
-        /// - Telefono: INTEGER
-        /// 
-        /// IMPORTANTE: Apellido_2 es opcional
+        /// IMPORTANTE:
+        /// ID: INTEGER PRIMARY KEY (se genera automáticamente)
+        /// Apellido_2 es opcional
         /// Si viene null desde C#, lo convierto a DBNull.Value para SQLite.
-        /// Esto lo aprendí de los apuntes de clase sobre manejo de nulls en BD.
         /// </summary>
         public void Insertar(Usuario usuario)
         {
@@ -60,7 +50,6 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Modifica un usuario existente en la base de datos
-        /// 
         /// Actualiza todos los campos excepto el ID.
         /// El ID se usa en la cláusula WHERE para identificar qué usuario modificar.
         /// </summary>
@@ -80,11 +69,9 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Elimina un usuario de la base de datos
-        /// 
         /// PRECAUCIÓN: Si este usuario tiene préstamos activos, podría causar
         /// problemas de integridad referencial.
         /// La validación de si tiene préstamos activos se hace en el Controlador,
-        /// no aquí (separación de responsabilidades).
         /// </summary>
         public void Eliminar(int id)
         {
@@ -96,10 +83,8 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Obtiene todos los usuarios de la biblioteca
-        /// 
         /// Los ordeno alfabéticamente por Nombre y luego por Apellido_1.
         /// Así la lista queda más organizada y fácil de navegar.
-        /// 
         /// Devuelve un DataTable con todas las columnas de la tabla Usuarios.
         /// </summary>
         public DataTable ObtenerTodos()
@@ -111,12 +96,10 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Busca un usuario específico por su ID
-        /// 
         /// Devuelve un DataTable con 0 o 1 filas:
         /// - 0 filas: El usuario no existe
         /// - 1 fila: El usuario existe y devuelve todos sus datos
-        /// 
-        /// Se usa en FormDetalleUsuario o cuando necesito información de un usuario concreto.
+        /// Se usa cuando necesito información de un usuario concreto.
         /// </summary>
         public DataTable BuscarPorId(int id)
         {
@@ -127,15 +110,11 @@ namespace BibliotecaVitoriaGasteiz.modelo
         }
 
         /// <summary>
-        /// Busca usuarios que coincidan con un término de búsqueda
-        /// 
+        /// Busca usuarios que coincidan con un término de búsqueda 
         /// BÚSQUEDA FLEXIBLE con LIKE:
         /// Busca en tres campos: Nombre, Apellido_1 y Apellido_2
         /// El operador LIKE con % permite coincidencias parciales:
         /// - Si busco "Juan", encuentra "Juan", "Juan Carlos", "María Juan", etc.
-        /// - Si busco "Gar", encuentra "García", "Garzón", "Garmendia", etc.
-        /// 
-        /// Esto lo aprendí de los apuntes de SQL de clase.
         /// Es mucho más útil que una búsqueda exacta (=).
         /// </summary>
         public DataTable Buscar(string termino)
@@ -152,10 +131,8 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Busca un usuario por su número de teléfono
-        /// 
         /// BÚSQUEDA EXACTA: Uso = en vez de LIKE
         /// porque el teléfono debe coincidir completamente.
-        /// 
         /// Útil para verificar si un teléfono ya está registrado
         /// o para buscar usuarios por su número.
         /// </summary>

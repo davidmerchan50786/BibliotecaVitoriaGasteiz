@@ -20,18 +20,15 @@ namespace BibliotecaVitoriaGasteiz
     /// - Barra de navegación superior (Libros, Usuarios, Préstamos)
     /// - Área central donde se muestran los formularios hijos (FormLibros, FormUsuarios, FormPrestamos)
     /// 
-    /// USO PATRÓN MDI (Multiple Document Interface):
+    /// USO PATRÓN MDI:
     /// - Este es el formulario padre (IsMdiContainer = true en el diseñador)
     /// - Los demás formularios se abren dentro de este como hijos (MdiChildren)
-    /// 
-    /// El diseño visual fue una parte importante: quería que quedara profesional
-    /// con los colores del Ayuntamiento y una navegación clara.
     /// 
     /// IMPORTANTE: Aquí creo UNA ÚNICA instancia del Controlador (patrón MVC)
     /// y la comparto con todos los formularios hijos. Así todos trabajan con los mismos datos.
     /// 
-    /// Desarrollador: David
-    /// Proyecto: Gestión de biblioteca del Ayuntamiento de Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria Gasteiz
     /// </summary>
     public partial class Gestor : Form
     {
@@ -168,7 +165,6 @@ namespace BibliotecaVitoriaGasteiz
         /// - Dock = Fill: Ocupa todo el espacio disponible
         /// - FormBorderStyle = None: Sin bordes, se ve integrado
         /// 
-        /// Esto lo aprendí de la documentación de Microsoft sobre MDI.
         /// </summary>
         private void InsertarFormulario(Form formulario)
         {
@@ -254,9 +250,5 @@ namespace BibliotecaVitoriaGasteiz
         {
             MostrarPrestamos();
         }
-
-        // NOTA: labelAyuntamiento_Click está definido en Gestor.Designer.cs
-        // No lo defino aquí para evitar duplicación
-        // (El diseñador ya lo conectó automáticamente)
     }
 }

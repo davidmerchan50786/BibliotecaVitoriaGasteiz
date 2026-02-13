@@ -4,24 +4,19 @@ using System.Windows.Forms;
 
 namespace BibliotecaControles
 {
+    // Clase personalizada para el evento de ver detalles
+    public class VerDetallesEventArgs : EventArgs
+    {
+        public int LibroId { get; set; }
+    }
+
+    /// <summary>
+    /// Control de usuario que representa un libro en forma de tarjeta visual.
+    /// </summary>
     public partial class TarjetaLibro : UserControl
     {
-        private int id;
-
-        // Evento público
-        public event EventHandler<VerDetallesLibroEventArgs> verDetalles;
-
-        public TarjetaLibro()
-        {
-            InitializeComponent();
-        }
-
-        // --- PROPIEDADES ---
-        public int Id
-        {
-            get => id;
-            set => id = value;
-        }
+        // Propiedades públicas
+        public int Id { get; set; }
 
         public string Titulo
         {
@@ -39,49 +34,57 @@ namespace BibliotecaControles
         {
             set
             {
-                if (value)
-                {
-                    labelEstado.Text = "Disponible";
-                    labelEstado.ForeColor = Color.Green;
-                }
-                else
-                {
-                    labelEstado.Text = "Prestado";
-                    labelEstado.ForeColor = Color.Red;
-                }
+                if (value) { labelEstado.Text = "Disponible"; labelEstado.ForeColor = Color.ForestGreen; }
+                else { labelEstado.Text = "Prestado"; labelEstado.ForeColor = Color.Crimson; }
             }
         }
 
-        // --- EVENTOS ---
+        // Evento personalizado
+        public event EventHandler<VerDetallesEventArgs> OnVerDetalles;
 
-        private void buttonVerDetalles_Click(object sender, EventArgs e)
+        private DateTime ultimoClic = DateTime.MinValue;
+
+        public TarjetaLibro()
         {
-            
-            if (this.verDetalles != null)
+            InitializeComponent();
+            ConfigurarSeguridadBotones();
+        }
+
+        /// <summary>
+        /// Configura los eventos y asegura que los botones no cierren la ventana padre.
+        /// </summary>
+        private void ConfigurarSeguridadBotones()
+        {
+            // SOLUCIÓN TÉCNICA: Eliminar DialogResult de cualquier botón
+            // Esto evita que el botón actúe como "Cancelar" o "Aceptar" en un formulario modal.
+            foreach (Control c in this.Controls)
             {
-                this.verDetalles(this, new VerDetallesLibroEventArgs { Id = this.Id });
+                if (c is Button btn) btn.DialogResult = DialogResult.None;
             }
+            try
+            {
+                if (buttonVerDetalles != null) buttonVerDetalles.DialogResult = DialogResult.None;
+            }
+            catch { }
+
+            // Conectar eventos click
+            this.Click += (s, e) => ProcesarClic();
+            labelTitulo.Click += (s, e) => ProcesarClic();
+            labelEscritor.Click += (s, e) => ProcesarClic();
+            labelEstado.Click += (s, e) => ProcesarClic();
+            try { buttonVerDetalles.Click += (s, e) => ProcesarClic(); } catch { }
         }
 
-        // Efectos visuales (Hover)
-        private void TarjetaLibro_MouseEnter(object sender, EventArgs e)
+        private void ProcesarClic()
         {
-            this.BackColor = Color.FromArgb(220, 220, 220);
+            // Filtro anti-rebote (500ms)
+            if ((DateTime.Now - ultimoClic).TotalMilliseconds < 500) return;
+            ultimoClic = DateTime.Now;
+            OnVerDetalles?.Invoke(this, new VerDetallesEventArgs { LibroId = this.Id });
         }
 
-        private void TarjetaLibro_MouseLeave(object sender, EventArgs e)
-        {
-            this.BackColor = Color.White;
-        }
-
-        private void pictureBoxLibro_Click(object sender, EventArgs e)
-        {
-            buttonVerDetalles_Click(sender, e);
-        }
-    }
-
-    public class VerDetallesLibroEventArgs : EventArgs
-    {
-        public int Id { get; set; }
+        private void buttonVerDetalles_Click(object sender, EventArgs e) => ProcesarClic();
+        private void TarjetaLibro_MouseEnter(object sender, EventArgs e) { this.BackColor = Color.WhiteSmoke; this.Cursor = Cursors.Hand; }
+        private void TarjetaLibro_MouseLeave(object sender, EventArgs e) { this.BackColor = Color.White; this.Cursor = Cursors.Default; }
     }
 }

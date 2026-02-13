@@ -17,14 +17,13 @@ namespace BibliotecaVitoriaGasteiz.modelo
     /// y los apuntes que hay que usar parámetros (@idLibro, @idUsuario...) para evitar
     /// inyección SQL y otros problemas de seguridad.
     /// 
-    /// Desarrollador: David
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria-Gasteiz
     /// </summary>
     public class RepositorioPrestamo
     {
         /// <summary>
         /// Inserta un nuevo préstamo en la base de datos
-        /// 
         /// Guardo:
         /// - ID_Libro: Qué libro se presta
         /// - ID_Usuario: A quién se le presta
@@ -32,7 +31,6 @@ namespace BibliotecaVitoriaGasteiz.modelo
         /// - Fecha_Fin: Cuándo debe devolverse
         /// 
         /// Las fechas las guardo como TEXT en formato "dd/MM/yyyy"
-        /// (Lo vi así en los ejemplos de SQLite de clase)
         /// </summary>
         public void Insertar(Prestamo prestamo)
         {
@@ -45,7 +43,7 @@ namespace BibliotecaVitoriaGasteiz.modelo
             cmd.Parameters.Add("@fechaInicio", DbType.String).Value = prestamo.FechaInicio;
             cmd.Parameters.Add("@fechaFin", DbType.String).Value = prestamo.FechaFin;
 
-            // Ejecuto el INSERT usando la clase SQLiteHelper que nos proporcionó el profesor
+            // Ejecuto el INSERT usando la clase SQLiteHelper que se nos proporcionó.
             SQLiteHelper.Ejecuta(Properties.Settings.Default.conexion, cmd);
         }
 
@@ -85,8 +83,6 @@ namespace BibliotecaVitoriaGasteiz.modelo
         /// - Prestamos (p): Tiene los IDs y fechas
         /// - Libros (l): Necesito el título del libro
         /// - Usuarios (u): Necesito el nombre del usuario
-        /// 
-        /// Esto lo aprendí de los apuntes de SQL de clase y la documentación de Microsoft.
         /// En vez de devolver solo IDs, devuelvo información legible.
         /// 
         /// ALIAS:
@@ -172,12 +168,10 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Busca todos los préstamos de un libro específico
-        /// 
         /// Útil para ver el historial completo de un libro:
         /// - Quiénes lo han prestado
         /// - Cuándo se prestó cada vez
-        /// 
-        /// Se ordena por fecha descendente (los más recientes primero)
+        /// Se ordena por fecha descendente
         /// </summary>
         public DataTable BuscarPorLibro(int idLibro)
         {
@@ -201,12 +195,10 @@ namespace BibliotecaVitoriaGasteiz.modelo
 
         /// <summary>
         /// Busca todos los préstamos de un usuario específico
-        /// 
         /// Útil para ver el historial de lectura de un usuario:
         /// - Qué libros ha prestado
         /// - Cuándo los prestó
-        /// 
-        /// Se ordena por fecha descendente (los más recientes primero)
+        /// Se ordena por fecha descendente
         /// </summary>
         public DataTable BuscarPorUsuario(int idUsuario)
         {

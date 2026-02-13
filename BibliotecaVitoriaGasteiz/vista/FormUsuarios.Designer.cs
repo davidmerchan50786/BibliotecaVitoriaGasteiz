@@ -73,10 +73,10 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelPrincipal.Name = "tableLayoutPanelPrincipal";
             this.tableLayoutPanelPrincipal.Padding = new System.Windows.Forms.Padding(0, 20, 0, 20);
             this.tableLayoutPanelPrincipal.RowCount = 6;
-            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 90F));
             this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanelPrincipal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanelPrincipal.Size = new System.Drawing.Size(984, 700);
@@ -88,10 +88,10 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelBuscarBorder.Controls.Add(this.textBoxBuscarUsuario);
             this.panelBuscarBorder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBuscarBorder.Location = new System.Drawing.Point(98, 20);
-            this.panelBuscarBorder.Margin = new System.Windows.Forms.Padding(0, 0, 0, 15);
+            this.panelBuscarBorder.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
             this.panelBuscarBorder.Name = "panelBuscarBorder";
-            this.panelBuscarBorder.Padding = new System.Windows.Forms.Padding(10, 20, 10, 20);
-            this.panelBuscarBorder.Size = new System.Drawing.Size(787, 65);
+            this.panelBuscarBorder.Padding = new System.Windows.Forms.Padding(10, 25, 10, 20);
+            this.panelBuscarBorder.Size = new System.Drawing.Size(787, 80);
             this.panelBuscarBorder.TabIndex = 0;
             // 
             // textBoxBuscarUsuario
@@ -101,7 +101,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.textBoxBuscarUsuario.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxBuscarUsuario.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.textBoxBuscarUsuario.ForeColor = System.Drawing.Color.White;
-            this.textBoxBuscarUsuario.Location = new System.Drawing.Point(10, 20);
+            this.textBoxBuscarUsuario.Location = new System.Drawing.Point(10, 25);
             this.textBoxBuscarUsuario.Name = "textBoxBuscarUsuario";
             this.textBoxBuscarUsuario.Size = new System.Drawing.Size(767, 22);
             this.textBoxBuscarUsuario.TabIndex = 0;
@@ -115,8 +115,8 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelFila1.Controls.Add(this.panelNombre, 0, 0);
             this.tableLayoutPanelFila1.Controls.Add(this.panelApellido1, 1, 0);
             this.tableLayoutPanelFila1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelFila1.Location = new System.Drawing.Point(98, 100);
-            this.tableLayoutPanelFila1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.tableLayoutPanelFila1.Location = new System.Drawing.Point(98, 120);
+            this.tableLayoutPanelFila1.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
             this.tableLayoutPanelFila1.Name = "tableLayoutPanelFila1";
             this.tableLayoutPanelFila1.RowCount = 1;
             this.tableLayoutPanelFila1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -199,8 +199,8 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelFila2.Controls.Add(this.panelApellido2, 0, 0);
             this.tableLayoutPanelFila2.Controls.Add(this.panelTelefono, 1, 0);
             this.tableLayoutPanelFila2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelFila2.Location = new System.Drawing.Point(98, 180);
-            this.tableLayoutPanelFila2.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.tableLayoutPanelFila2.Location = new System.Drawing.Point(98, 210);
+            this.tableLayoutPanelFila2.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
             this.tableLayoutPanelFila2.Name = "tableLayoutPanelFila2";
             this.tableLayoutPanelFila2.RowCount = 1;
             this.tableLayoutPanelFila2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -286,8 +286,8 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.tableLayoutPanelBotones.Controls.Add(this.panelButtonEditar, 1, 0);
             this.tableLayoutPanelBotones.Controls.Add(this.panelButtonEliminar, 2, 0);
             this.tableLayoutPanelBotones.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelBotones.Location = new System.Drawing.Point(98, 260);
-            this.tableLayoutPanelBotones.Margin = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.tableLayoutPanelBotones.Location = new System.Drawing.Point(98, 300);
+            this.tableLayoutPanelBotones.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
             this.tableLayoutPanelBotones.Name = "tableLayoutPanelBotones";
             this.tableLayoutPanelBotones.RowCount = 1;
             this.tableLayoutPanelBotones.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -377,7 +377,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.labelListaUsuarios.AutoSize = true;
             this.labelListaUsuarios.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.labelListaUsuarios.ForeColor = System.Drawing.Color.Black;
-            this.labelListaUsuarios.Location = new System.Drawing.Point(101, 344);
+            this.labelListaUsuarios.Location = new System.Drawing.Point(101, 384);
             this.labelListaUsuarios.Name = "labelListaUsuarios";
             this.labelListaUsuarios.Size = new System.Drawing.Size(138, 21);
             this.labelListaUsuarios.TabIndex = 4;
@@ -392,11 +392,11 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.dataGridViewUsuarios.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewUsuarios.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewUsuarios.Location = new System.Drawing.Point(101, 368);
+            this.dataGridViewUsuarios.Location = new System.Drawing.Point(101, 408);
             this.dataGridViewUsuarios.Name = "dataGridViewUsuarios";
             this.dataGridViewUsuarios.ReadOnly = true;
             this.dataGridViewUsuarios.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewUsuarios.Size = new System.Drawing.Size(781, 309);
+            this.dataGridViewUsuarios.Size = new System.Drawing.Size(781, 269);
             this.dataGridViewUsuarios.TabIndex = 5;
             // 
             // FormUsuarios

@@ -4,48 +4,34 @@ using System.Drawing;
 using System.Windows.Forms;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
+using BibliotecaVitoriaGasteiz.helpers;
 
 namespace BibliotecaVitoriaGasteiz.vista
 {
     /// <summary>
-    /// Formulario de Gestión de Préstamos de la Biblioteca Municipal de Vitoria-Gasteiz.
-    ///
-    /// RESPONSABILIDADES:
-    ///   - Mostrar todos los préstamos activos con scroll vertical y horizontal.
-    ///   - Registrar nuevos préstamos (ID_Libro + ID_Usuario + fechas).
-    ///   - Registrar devoluciones de préstamos activos.
-    ///   - Resaltar visualmente los préstamos con retraso en color rojo.
-    ///
-    /// PATRÓN MVC:
-    ///   Vista pura. Toda la lógica se delega al <see cref="Controlador"/>
-    ///   inyectado por el Gestor a través de <see cref="MiControlador"/>.
-    ///
-    /// PATRÓN SINGLETON:
-    ///   Una única instancia activa. Se obtiene con <see cref="GetInstance()"/>.
-    ///
-    /// SCROLL:
-    ///   - AutoScroll = true en el formulario.
-    ///   - ScrollBars = Both en el DataGridView para tablas anchas.
-    ///
-    /// COLUMNAS DE LA BASE DE DATOS (tabla Prestamos):
-    ///   ID (INTEGER) | ID_Libro (INTEGER) | ID_Usuario (INTEGER)
-    ///   Fecha_Inicio (TEXT) | Fecha_Fin (TEXT)
-    ///
+    /// Formulario de Gestión de Préstamos.
+    /// 
+    /// DESARROLLO Y PROBLEMAS RESUELTOS:
+    ///    Mantenemos los paneles de datos blancos cuadrados y redondeamos 
+    ///    exclusivamente los botones de acción para guiar el ojo del usuario (UIHelper).
+    ///    
+    ///    DEBOUNCE ANTI-BUGS: Control de tiempo de 1 segundo a los clics para evitar dobles envíos.
+    ///    
+    ///    Al devolver un libro, seguía en la tabla. El error era que 
+    ///    la vista pedía el "Historial" completo (ObtenerTodos) en lugar de pedir los préstamos 
+    ///    en curso. Se cambió la llamada a ObtenerPrestamosActivos() y se forzó DataSource = null 
+    ///    para obligar al repintado.
+    ///    ComboBox arrancan en blanco (SelectedIndex = -1) para evitar 
+    ///    préstamos accidentales.
+    /// 
     /// Desarrollador: David Merchan
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
-    /// Asignatura: Desarrollo de Interfaces - 3º DAM
+    /// Proyecto: Biblioteca Vitoria Gasteiz
     /// </summary>
     public partial class FormPrestamos : Form
     {
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Singleton
+        #region Singleton y Variables
 
-        /// <summary>Instancia única del formulario.</summary>
         private static FormPrestamos formulario;
-
-        /// <summary>
-        /// Devuelve la instancia única. La recrea si fue cerrada (IsDisposed).
-        /// </summary>
         public static FormPrestamos GetInstance()
         {
             if (formulario == null || formulario.IsDisposed)
@@ -53,170 +39,206 @@ namespace BibliotecaVitoriaGasteiz.vista
             return formulario;
         }
 
-        #endregion
-
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Campos y propiedades
-
-        /// <summary>
-        /// Controlador MVC inyectado desde el Gestor antes de mostrar el formulario.
-        /// </summary>
         public Controlador MiControlador { get; set; }
 
+        // Control anti-doble clic
+        private DateTime tiempoDesbloqueo = DateTime.MinValue;
+
         #endregion
 
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Constructor
+        #region Constructor e Inicialización
 
-        /// <summary>
-        /// Constructor privado (Singleton).
-        /// Activa el scroll del formulario y registra los eventos.
-        /// </summary>
         private FormPrestamos()
         {
             InitializeComponent();
-
-            // ── Scroll del formulario ────────────────────────────────────────
-            // AutoScroll = true añade barras de desplazamiento cuando el contenido
-            // supera el área visible. Útil al redimensionar la ventana MDI hija.
             this.AutoScroll = true;
+            dataGridViewPrestamos.ScrollBars = ScrollBars.Both;
 
             ConfigurarEventos();
+            ConfigurarEstiloVisual();
 
-            // Recargar datos cada vez que el formulario se hace visible
-            this.VisibleChanged += FormPrestamos_VisibleChanged;
+            // Refresco automático al cambiar a esta pestaña
+            this.VisibleChanged += (s, e) => { if (this.Visible) { CargarCombos(); CargarPrestamos(); } };
         }
 
-        #endregion
+        private bool PuedeProcesarClick()
+        {
+            return DateTime.Now >= tiempoDesbloqueo;
+        }
 
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Configuración de eventos
+        private void BloquearClicks()
+        {
+            tiempoDesbloqueo = DateTime.Now.AddMilliseconds(1000);
+        }
 
-        /// <summary>
-        /// Registra los eventos del formulario.
-        ///
-        /// EVENTOS:
-        ///   ScrollBars → scroll propio del DataGridView (filas y columnas).
-        ///   CellDoubleClick → seleccionar préstamo para devolver.
-        ///   VisibleChanged → recarga automática al mostrar el formulario.
-        /// </summary>
+        private void ConfigurarEstiloVisual()
+        {
+            // Botones redondeados 
+            if (panelButtonPrestar != null) panelButtonPrestar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 30, Color.Transparent);
+            if (panelButtonLimpiar != null) panelButtonLimpiar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 30, Color.Transparent);
+            if (panelButtonDevolver != null) panelButtonDevolver.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 30, Color.Transparent);
+
+            // Redibujado al maximizar/minimizar
+            if (panelButtonPrestar != null) panelButtonPrestar.Resize += (s, e) => ((Control)s).Invalidate();
+            if (panelButtonLimpiar != null) panelButtonLimpiar.Resize += (s, e) => ((Control)s).Invalidate();
+            if (panelButtonDevolver != null) panelButtonDevolver.Resize += (s, e) => ((Control)s).Invalidate();
+        }
+
         private void ConfigurarEventos()
         {
-            // Scroll vertical (muchos préstamos) y horizontal (columnas anchas)
-            dataGridViewPrestamos.ScrollBars = ScrollBars.Both;
+            if (panelButtonPrestar != null) panelButtonPrestar.Click += BtnRealizarPrestamo_Click;
+            if (labelPrestar != null) labelPrestar.Click += BtnRealizarPrestamo_Click;
+
+            if (panelButtonLimpiar != null) panelButtonLimpiar.Click += BtnLimpiar_Click;
+            if (labelLimpiar != null) labelLimpiar.Click += BtnLimpiar_Click;
+
+            if (panelButtonDevolver != null) panelButtonDevolver.Click += BtnDevolver_Click;
+            if (labelDevolver != null) labelDevolver.Click += BtnDevolver_Click;
         }
 
-        #endregion
-
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Visibilidad y carga inicial
-
-        /// <summary>
-        /// Se dispara cuando el formulario cambia de visible a no visible (o viceversa).
-        /// Recarga los préstamos cada vez que el formulario se abre/muestra,
-        /// garantizando que los datos estén siempre actualizados.
-        /// </summary>
-        private void FormPrestamos_VisibleChanged(object sender, EventArgs e)
+        private void FormPrestamos_Load(object sender, EventArgs e)
         {
-            if (this.Visible)
-                CargarPrestamos();
+            CargarCombos();
+            CargarPrestamos();
         }
 
         #endregion
 
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Carga y visualización del grid
+        #region Lógica de Préstamos y Devoluciones
 
-        /// <summary>
-        /// Obtiene todos los préstamos del controlador y los muestra en el grid.
-        ///
-        /// PROTECCIÓN:
-        ///   Sale silenciosamente si MiControlador aún no fue inyectado por el Gestor,
-        ///   evitando un NullReferenceException en la carga inicial.
-        ///
-        /// RESALTADO DE RETRASOS:
-        ///   Tras cargar los datos, recorre las filas y colorea en rojo las que
-        ///   tienen Fecha_Fin anterior a hoy (préstamo vencido sin devolver).
-        /// </summary>
+        private void BtnRealizarPrestamo_Click(object sender, EventArgs e)
+        {
+            if (!PuedeProcesarClick()) return;
+
+            try
+            {
+                if (MiControlador == null) { MessageBox.Show("Controlador no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (comboBoxUsuarios.SelectedValue == null)
+                { MessageBox.Show("Selecciona un usuario.", "Dato requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+
+                if (comboBoxLibros.SelectedValue == null)
+                { MessageBox.Show("Selecciona un libro disponible.", "Dato requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+
+                if (dateTimePickerFin.Value.Date <= dateTimePickerInicio.Value.Date)
+                { MessageBox.Show("La fecha de devolución debe ser posterior a la de inicio.", "Fecha incorrecta", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+
+                int idUsuario = Convert.ToInt32(comboBoxUsuarios.SelectedValue);
+                int idLibro = Convert.ToInt32(comboBoxLibros.SelectedValue);
+
+                MiControlador.RealizarPrestamo(idUsuario, idLibro, dateTimePickerInicio.Value, dateTimePickerFin.Value);
+
+                MessageBox.Show("Préstamo registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimpiarCampos();
+                CargarCombos();
+                CargarPrestamos();
+            }
+            catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            finally { BloquearClicks(); }
+        }
+
+        private void BtnDevolver_Click(object sender, EventArgs e)
+        {
+            if (!PuedeProcesarClick()) return;
+
+            try
+            {
+                if (MiControlador == null) { MessageBox.Show("Controlador no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (dataGridViewPrestamos.SelectedRows.Count == 0)
+                { MessageBox.Show("Selecciona un préstamo de la lista.", "Selección requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+
+                if (MessageBox.Show("¿Confirmas la devolución del libro seleccionado?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    return;
+
+                int idPrestamo = Convert.ToInt32(dataGridViewPrestamos.SelectedRows[0].Cells["ID"].Value);
+                MiControlador.DevolverLibro(idPrestamo);
+
+                MessageBox.Show("Devolución registrada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimpiarCampos();
+                CargarCombos();
+                CargarPrestamos();
+            }
+            catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            finally { BloquearClicks(); }
+        }
+
+        private void BtnLimpiar_Click(object sender, EventArgs e)
+        {
+            if (!PuedeProcesarClick()) return;
+            LimpiarCampos();
+        }
+
+        private void LimpiarCampos()
+        {
+            comboBoxUsuarios.SelectedIndex = -1;
+            comboBoxLibros.SelectedIndex = -1;
+            dateTimePickerInicio.Value = DateTime.Today;
+            dateTimePickerFin.Value = DateTime.Today.AddDays(15);
+        }
+
+        #endregion
+
+        #region Combobox y Grid
+
+        private void CargarCombos()
+        {
+            try
+            {
+                if (MiControlador == null) return;
+
+                comboBoxUsuarios.DataSource = MiControlador.ObtenerTodosUsuarios();
+                comboBoxUsuarios.DisplayMember = "Nombre";
+                comboBoxUsuarios.ValueMember = "Id";
+
+                comboBoxLibros.DataSource = MiControlador.ObtenerLibrosDisponibles();
+                comboBoxLibros.DisplayMember = "Titulo";
+                comboBoxLibros.ValueMember = "ID";
+
+                LimpiarCampos(); // Asegura que arranquen en blanco
+            }
+            catch (Exception ex) { MessageBox.Show($"Error al cargar datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
         private void CargarPrestamos()
         {
             try
             {
                 if (MiControlador == null) return;
 
-                DataTable dt = MiControlador.ObtenerPrestamos();
-                MostrarPrestamosEnGrid(dt);
+                dataGridViewPrestamos.DataSource = null; // Bofetón al caché del DataGrid
+
+                // Pedimos los activos, no todos
+                dataGridViewPrestamos.DataSource = MiControlador.ObtenerPrestamosActivos();
+
+                dataGridViewPrestamos.BorderStyle = BorderStyle.None;
+                dataGridViewPrestamos.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(238, 239, 249);
+                dataGridViewPrestamos.DefaultCellStyle.SelectionBackColor = Color.DarkTurquoise;
+                dataGridViewPrestamos.BackgroundColor = Color.White;
+                dataGridViewPrestamos.RowHeadersVisible = false;
+
                 ResaltarRetrasos();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al cargar préstamos:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            catch (Exception ex) { MessageBox.Show($"Error al cargar préstamos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        /// <summary>
-        /// Aplica el DataTable al DataGridView y configura la apariencia visual.
-        ///
-        /// ESTILOS:
-        ///   - Sin borde exterior.
-        ///   - Filas alternas en lavanda claro para facilitar la lectura.
-        ///   - Fila seleccionada en DarkTurquoise (paleta del proyecto).
-        ///   - Sin cabecera de fila lateral.
-        /// </summary>
-        /// <param name="dt">DataTable con los préstamos a mostrar.</param>
-        private void MostrarPrestamosEnGrid(DataTable dt)
-        {
-            dataGridViewPrestamos.DataSource = dt;
-            dataGridViewPrestamos.BorderStyle = BorderStyle.None;
-            dataGridViewPrestamos.AlternatingRowsDefaultCellStyle.BackColor =
-                Color.FromArgb(238, 239, 249);
-            dataGridViewPrestamos.DefaultCellStyle.SelectionBackColor = Color.DarkTurquoise;
-            dataGridViewPrestamos.BackgroundColor = Color.White;
-            dataGridViewPrestamos.RowHeadersVisible = false;
-        }
-
-        /// <summary>
-        /// Recorre las filas del grid y resalta en rojo las que tienen
-        /// Fecha_Fin anterior a la fecha actual (préstamo vencido).
-        ///
-        /// LÓGICA:
-        ///   Se compara la columna "Fecha_Fin" (formato texto "yyyy-MM-dd" según la BD)
-        ///   con DateTime.Today. Si la fecha de fin ya pasó, la fila se colorea en
-        ///   rojo claro con texto rojo oscuro para alertar visualmente al bibliotecario.
-        /// </summary>
         private void ResaltarRetrasos()
         {
             foreach (DataGridViewRow fila in dataGridViewPrestamos.Rows)
             {
                 if (fila.IsNewRow) continue;
 
-                object valorFecha = fila.Cells["Fecha_Fin"].Value;
-                if (valorFecha == null || valorFecha == DBNull.Value) continue;
+                var val = fila.Cells["Fecha_Fin"].Value;
+                if (val == null || val == DBNull.Value) continue;
 
-                if (DateTime.TryParse(valorFecha.ToString(), out DateTime fechaFin))
+                if (DateTime.TryParse(val.ToString(), out DateTime fechaFin) && fechaFin.Date < DateTime.Today)
                 {
-                    if (fechaFin < DateTime.Today)
-                    {
-                        fila.DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 220);
-                        fila.DefaultCellStyle.ForeColor = Color.DarkRed;
-                    }
+                    fila.DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 220);
+                    fila.DefaultCellStyle.ForeColor = Color.DarkRed;
                 }
             }
-        }
-
-        #endregion
-
-        // ═══════════════════════════════════════════════════════════════════════
-        #region Compatibilidad con el Designer de Visual Studio
-
-        /// <summary>
-        /// Evento CellContentClick del DataGridView registrado en el Designer.
-        /// Actualmente reservado para futuras funcionalidades (ej. botones en celdas).
-        /// </summary>
-        private void dataGridViewPrestamos_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Reservado para posibles botones en celdas (ej. columna "Devolver")
         }
 
         #endregion

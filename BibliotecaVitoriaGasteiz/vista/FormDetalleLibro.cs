@@ -1,7 +1,7 @@
-using System;
-using System.Data;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Data;
 using BibliotecaVitoriaGasteiz.controlador;
 using BibliotecaVitoriaGasteiz.modelo;
 using BibliotecaVitoriaGasteiz.helpers;
@@ -9,203 +9,318 @@ using BibliotecaVitoriaGasteiz.helpers;
 namespace BibliotecaVitoriaGasteiz.vista
 {
     /// <summary>
-    /// Formulario de Detalle de Libro
+    /// Formulario de Detalle de Libro (Ficha Técnica).
     /// 
-    /// Se abre cuando se hace click en "Ver Detalles" de una TarjetaLibro.
+    /// DESARROLLO Y PROBLEMAS RESUELTOS:
     /// 
-    /// FUNCIONALIDADES:
-    /// - Visualizar todos los datos de un libro (incluida la sinopsis completa)
-    /// - Editar los datos del libro
-    /// - Eliminar el libro de la base de datos
-    /// - Ver el estado actual (Disponible / Prestado)
+    /// 1. AGUJERO DE SEGURIDAD AL EDITAR: Me di cuenta de que, aunque había validado estrictamente 
+    ///    los datos al crear un libro (4 cifras para el año, campos obligatorios...), se me había
+    ///    olvidado poner esas mismas validaciones al EDITARLO. Cualquier usuario podría haber 
+    ///    borrado el título y haber roto la base de datos. ¡Solucionado!
+    /// 2. DEBOUNCE GLOBAL: Para mantener la coherencia con el resto de la app, añadí el sistema 
+    ///    Anti-Doble Clic a esta ventana modal para evitar envíos múltiples a la base de datos.
     /// 
-    /// MODOS:
-    /// 1. Modo Visualización: Solo lectura, botones Editar/Cerrar.
-    /// 2. Modo Edición: Escritura, botones Guardar/Cancelar.
-    /// 
-    /// Desarrollador: David
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria Gasteiz
+    /// Asignatura: Diseño de Interfaces - DAM
     /// </summary>
     public partial class FormDetalleLibro : Form
     {
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Propiedades y Estado
+
         public Controlador MiControlador { get; set; }
         public int LibroId { get; set; } = -1;
+
+        /// <summary>Evento para avisar a FormLibros de que recargue sus tarjetas.</summary>
         public event EventHandler LibroModificado;
-        private bool modoEdicion = false;
+
+        private bool modoEdicionActivado = false;
+
+        // CONTROL ANTI-REBOTE
+        private DateTime tiempoDesbloqueo = DateTime.MinValue;
+
+        #endregion
+
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Constructor e Inicialización
 
         public FormDetalleLibro()
         {
             InitializeComponent();
-            ConfigurarEsteticaResponsiva();
-
-            // IMPORTANTE: Conectar el evento Load manualmente
-            this.Load += FormDetalleLibro_Load;
+            ConfigurarEstiloYSeguridad();
+            this.Load += Evento_CargarFormulario;
         }
 
-        /// <summary>
-        /// Configura el redibujado para evitar dientes de sierra y bordes feos.
-        /// </summary>
-        private void ConfigurarEsteticaResponsiva()
+        private bool PuedeProcesarClick()
         {
-            // Forzar redibujado al cambiar tamaño
-            panelTitulo.Resize += (s, e) => panelTitulo.Invalidate();
-            panelEscritor.Resize += (s, e) => panelEscritor.Invalidate();
-            panelAnoEdicion.Resize += (s, e) => panelAnoEdicion.Invalidate();
-            panelSinopsis.Resize += (s, e) => panelSinopsis.Invalidate();
-
-            panelBtnEditar.Resize += (s, e) => panelBtnEditar.Invalidate();
-            panelBtnCancelar.Resize += (s, e) => panelBtnCancelar.Invalidate();
-            panelBtnEliminar.Resize += (s, e) => panelBtnEliminar.Invalidate();
-
-            // Dibujo de bordes redondeados
-            panelTitulo.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
-            panelEscritor.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
-            panelAnoEdicion.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
-            panelSinopsis.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
-
-            panelBtnEditar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
-            panelBtnCancelar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
-            panelBtnEliminar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
-
-            // Clicks en Labels
-            labelBtnEditar.Click += BtnEditar_Click;
-            labelBtnCancelar.Click += BtnCancelar_Click;
-            labelBtnEliminar.Click += BtnEliminar_Click;
-            
-            // Clicks en Paneles (para mejor UX)
-            panelBtnEditar.Click += BtnEditar_Click;
-            panelBtnCancelar.Click += BtnCancelar_Click;
-            panelBtnEliminar.Click += BtnEliminar_Click;
+            return DateTime.Now >= tiempoDesbloqueo;
         }
 
-        private void FormDetalleLibro_Load(object sender, EventArgs e)
+        private void BloquearClicks()
         {
-            if (MiControlador == null || LibroId == -1)
+            tiempoDesbloqueo = DateTime.Now.AddMilliseconds(1000);
+        }
+
+        private void ConfigurarEstiloYSeguridad()
+        {
+            // Evitar cierres fantasma si el Designer asignó DialogResult a algún control
+            foreach (Control c in this.Controls)
             {
-                MessageBox.Show("Error: Datos incompletos.");
-                this.Close();
-                return;
+                if (c is Panel p)
+                {
+                    foreach (Control hijo in p.Controls)
+                    {
+                        if (hijo is Label lbl) lbl.Click += (s, e) => { };
+                    }
+                }
             }
 
-            CargarDatosLibro();
-            DeshabilitarEdicion();
+            // Bordes de los paneles de texto
+            if (panelTitulo != null) panelTitulo.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            if (panelEscritor != null) panelEscritor.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            if (panelAnoEdicion != null) panelAnoEdicion.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
+            if (panelSinopsis != null) panelSinopsis.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 15, Color.Transparent);
 
-            // Aseguramos que los textos estén encima del fondo pintado
-            textBoxTitulo.BringToFront();
-            textBoxEscritor.BringToFront();
-            textBoxAnoEdicion.BringToFront();
-            textBoxSinopsis.BringToFront();
+            // Botón EDITAR / GUARDAR
+            if (panelBtnEditar != null)
+            {
+                panelBtnEditar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
+                panelBtnEditar.Click += BtnEditar_Click;
+                if (labelBtnEditar != null) labelBtnEditar.Click += BtnEditar_Click;
+            }
+
+            // Botón CANCELAR / VOLVER
+            if (panelBtnCancelar != null)
+            {
+                panelBtnCancelar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
+                panelBtnCancelar.Click += BtnCancelar_Click;
+                if (labelBtnCancelar != null) labelBtnCancelar.Click += BtnCancelar_Click;
+            }
+
+            // Botón ELIMINAR
+            if (panelBtnEliminar != null)
+            {
+                panelBtnEliminar.Paint += (s, e) => UIHelper.DibujarBordeRedondeado(s, e, 20, Color.Transparent);
+                panelBtnEliminar.Click += BtnEliminar_Click;
+                if (labelBtnEliminar != null) labelBtnEliminar.Click += BtnEliminar_Click;
+            }
         }
 
-        private void CargarDatosLibro()
+        #endregion
+
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Carga de Datos (Backend)
+
+        private void Evento_CargarFormulario(object sender, EventArgs e)
         {
             try
             {
-                DataTable dt = MiControlador.BuscarLibroPorId(LibroId);
-
-                if (dt != null && dt.Rows.Count > 0)
+                if (MiControlador == null)
                 {
-                    DataRow row = dt.Rows[0];
-                    textBoxTitulo.Text = row["Titulo"].ToString();
-                    textBoxEscritor.Text = row["Escritor"].ToString();
-                    textBoxAnoEdicion.Text = row["Ano_Edicion"] != DBNull.Value ? row["Ano_Edicion"].ToString() : "";
-                    textBoxSinopsis.Text = row["Sinopsis"] != DBNull.Value ? row["Sinopsis"].ToString() : "";
+                    if (this.Owner is BibliotecaVitoriaGasteiz.Gestor gestor) MiControlador = gestor.miControlador;
+                    else if (this.MdiParent is BibliotecaVitoriaGasteiz.Gestor mdi) MiControlador = mdi.miControlador;
+                }
 
-                    bool disponible = Convert.ToInt32(row["Disponible"]) == 1;
-                    labelEstado.Text = disponible ? "✓ Disponible" : "✗ Prestado";
-                    labelEstado.ForeColor = disponible ? Color.LimeGreen : Color.Crimson;
-                }
-                else
+                if (MiControlador == null || LibroId <= 0)
                 {
-                    this.Close();
+                    MessageBox.Show("Error crítico: No se han recibido los datos del libro o el controlador.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
+
+                CargarDatosDelLibro();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error cargando datos: {ex.Message}");
+                MessageBox.Show("Error al cargar la ficha: " + ex.Message);
             }
         }
+
+        private void CargarDatosDelLibro()
+        {
+            DataTable dt = MiControlador.BuscarLibroPorId(LibroId);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow fila = dt.Rows[0];
+
+                textBoxTitulo.Text = fila["Titulo"].ToString();
+                textBoxEscritor.Text = fila["Escritor"].ToString();
+                textBoxAnoEdicion.Text = fila["Ano_Edicion"] != DBNull.Value ? fila["Ano_Edicion"].ToString() : "";
+
+                if (dt.Columns.Contains("Sinopsis") && fila["Sinopsis"] != DBNull.Value)
+                    textBoxSinopsis.Text = fila["Sinopsis"].ToString();
+                else
+                    textBoxSinopsis.Text = "";
+
+                bool disponible = false;
+                var valDisp = fila["Disponible"];
+                if (valDisp is bool b) disponible = b;
+                else if (valDisp is int i) disponible = (i == 1);
+                else if (valDisp is long l) disponible = (l == 1);
+
+                labelEstado.Text = disponible ? "✓ Disponible" : "✗ Prestado";
+                labelEstado.ForeColor = disponible ? Color.FromArgb(0, 204, 102) : Color.Crimson;
+            }
+            else
+            {
+                MessageBox.Show("No se encontró el registro en la base de datos.");
+                this.Close();
+            }
+        }
+
+        #endregion
+
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Lógica de Negocio (Acciones y Validaciones)
 
         private void BtnEditar_Click(object sender, EventArgs e)
         {
-            if (modoEdicion)
-                GuardarCambios();
-            else
-                HabilitarEdicion();
-        }
+            if (!PuedeProcesarClick()) return;
 
-        private void GuardarCambios()
-        {
-            try
+            if (!modoEdicionActivado)
             {
-                if (string.IsNullOrWhiteSpace(textBoxTitulo.Text)) return;
+                // --- CAMBIO A MODO EDICIÓN ---
+                modoEdicionActivado = true;
 
-                int? ano = null;
-                if (int.TryParse(textBoxAnoEdicion.Text, out int a)) ano = a;
+                labelBtnEditar.Text = "Guardar";
+                panelBtnEditar.BackColor = Color.ForestGreen;
 
-                var libro = new Libro
+                labelBtnCancelar.Text = "Cancelar";
+                panelBtnEliminar.Visible = false; // Ocultamos el botón eliminar por seguridad
+
+                SetReadOnly(false, Color.Ivory);
+                textBoxTitulo.Focus();
+
+                BloquearClicks();
+            }
+            else
+            {
+                // --- GUARDAR CAMBIOS ---
+                try
                 {
-                    Id = this.LibroId,
-                    Titulo = textBoxTitulo.Text.Trim(),
-                    Escritor = textBoxEscritor.Text.Trim(),
-                    AnoEdicion = ano,
-                    Sinopsis = textBoxSinopsis.Text.Trim(),
-                    Disponible = labelEstado.Text.Contains("Disponible")
-                };
+                    // 1. Validar campos obligatorios
+                    if (string.IsNullOrWhiteSpace(textBoxTitulo.Text) || string.IsNullOrWhiteSpace(textBoxEscritor.Text))
+                    {
+                        MessageBox.Show("El Título y el Escritor son campos obligatorios.", "Faltan datos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        BloquearClicks();
+                        return;
+                    }
 
-                MiControlador.ModificarLibro(libro);
-                MessageBox.Show("Libro actualizado.");
+                    // 2. Validación de Año de Edición (Debe ser de 4 cifras exactas si se rellena)
+                    int? ano = null;
+                    string anoTexto = textBoxAnoEdicion.Text.Trim();
 
-                LibroModificado?.Invoke(this, EventArgs.Empty);
-                DeshabilitarEdicion();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
+                    if (!string.IsNullOrWhiteSpace(anoTexto))
+                    {
+                        if (anoTexto.Length != 4 || !int.TryParse(anoTexto, out int a))
+                        {
+                            MessageBox.Show("El Año de Edición debe ser un número de exactamente 4 cifras (ej: 1998).", "Año Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            textBoxAnoEdicion.Focus();
+                            BloquearClicks();
+                            return;
+                        }
+                        ano = a;
+                    }
 
-        private void BtnCancelar_Click(object sender, EventArgs e)
-        {
-            if (modoEdicion)
-            {
-                CargarDatosLibro();
-                DeshabilitarEdicion();
-            }
-            else
-            {
-                this.Close();
+                    // 3. Construcción del objeto
+                    var libroEditado = new Libro
+                    {
+                        ID = this.LibroId,
+                        Titulo = textBoxTitulo.Text.Trim(),
+                        Escritor = textBoxEscritor.Text.Trim(),
+                        Ano_Edicion = ano,
+                        Sinopsis = textBoxSinopsis.Text.Trim(),
+                        Disponible = labelEstado.Text.Contains("Disponible")
+                    };
+
+                    // 4. Modificación en BD
+                    MiControlador.ModificarLibro(libroEditado);
+                    MessageBox.Show("Libro actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Avisar al formulario principal para que recargue las tarjetas
+                    LibroModificado?.Invoke(this, EventArgs.Empty);
+
+                    RestaurarModoLectura();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al guardar cambios: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    BloquearClicks();
+                }
             }
         }
 
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("¿Eliminar libro?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (!PuedeProcesarClick()) return;
+
+            DialogResult confirmacion = MessageBox.Show(
+                "¿Estás seguro de que deseas eliminar este libro permanentemente?\nEsta acción no se puede deshacer.",
+                "Confirmar Eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirmacion == DialogResult.Yes)
             {
-                MiControlador.EliminarLibro(LibroId);
-                LibroModificado?.Invoke(this, EventArgs.Empty);
+                try
+                {
+                    MiControlador.EliminarLibro(LibroId);
+                    LibroModificado?.Invoke(this, EventArgs.Empty);
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al eliminar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            BloquearClicks();
+        }
+
+        private void BtnCancelar_Click(object sender, EventArgs e)
+        {
+            if (!PuedeProcesarClick()) return;
+
+            if (modoEdicionActivado)
+            {
+                // El usuario se ha arrepentido a mitad de la edición. Recargamos datos originales de BD.
+                CargarDatosDelLibro();
+                RestaurarModoLectura();
+                BloquearClicks();
+            }
+            else
+            {
                 this.Close();
             }
         }
 
-        private void HabilitarEdicion()
-        {
-            modoEdicion = true;
-            SetReadOnly(false, Color.White);
-            labelBtnEditar.Text = "Guardar";
-            labelBtnCancelar.Text = "Cancelar";
-            panelBtnEliminar.Visible = false;
-        }
+        #endregion
 
-        private void DeshabilitarEdicion()
+        // ═══════════════════════════════════════════════════════════════════════
+        #region Métodos Auxiliares de Interfaz
+
+        private void RestaurarModoLectura()
         {
-            modoEdicion = false;
-            SetReadOnly(true, Color.WhiteSmoke);
+            modoEdicionActivado = false;
+
+            // Devolver apariencia original
             labelBtnEditar.Text = "Editar";
+            panelBtnEditar.BackColor = Color.DarkCyan;
+
             labelBtnCancelar.Text = "Cerrar";
             panelBtnEliminar.Visible = true;
+
+            // Bloquear escritura
+            SetReadOnly(true, Color.WhiteSmoke);
         }
 
+        /// <summary>
+        /// Enciende o apaga la capacidad de escribir en todos los TextBox de la ficha.
+        /// </summary>
         private void SetReadOnly(bool activado, Color colorFondo)
         {
             textBoxTitulo.ReadOnly = activado; textBoxTitulo.BackColor = colorFondo;
@@ -213,5 +328,7 @@ namespace BibliotecaVitoriaGasteiz.vista
             textBoxAnoEdicion.ReadOnly = activado; textBoxAnoEdicion.BackColor = colorFondo;
             textBoxSinopsis.ReadOnly = activado; textBoxSinopsis.BackColor = colorFondo;
         }
+
+        #endregion
     }
 }

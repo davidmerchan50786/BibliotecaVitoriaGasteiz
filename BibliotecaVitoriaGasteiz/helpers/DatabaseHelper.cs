@@ -11,8 +11,8 @@ namespace BibliotecaVitoriaGasteiz.helpers
     /// Creada para solucionar el problema de IDs inválidos (ID = 0 o negativos) que impedían
     /// realizar préstamos correctamente.
     /// 
-    /// Desarrollador: David
-    /// Propósito: Gestión de biblioteca del Ayuntamiento de Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria-Gasteiz
     /// </summary>
     public static class DatabaseHelper
     {

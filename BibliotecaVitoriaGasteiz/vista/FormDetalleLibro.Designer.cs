@@ -1,4 +1,4 @@
-namespace BibliotecaVitoriaGasteiz.vista
+﻿namespace BibliotecaVitoriaGasteiz.vista
 {
     partial class FormDetalleLibro
     {
@@ -313,7 +313,6 @@ namespace BibliotecaVitoriaGasteiz.vista
             this.panelBtnCancelar.ResumeLayout(false);
             this.panelBtnEliminar.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         #endregion

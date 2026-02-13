@@ -14,13 +14,14 @@ namespace BibliotecaVitoriaGasteiz.controlador
     /// - Marcar libros como no disponibles al prestarlos
     /// - Devolver libros y marcarlos como disponibles de nuevo
     /// 
-    /// Aplico el patrón MVC que vimos en clase:
+    /// patrón MVC:
+    /// 
     /// - Este controlador NO accede directamente a la BD
     /// - Usa el RepositorioPrestamo (capa de datos) para las consultas
     /// - También usa RepositorioLibro para cambiar disponibilidad
     /// 
-    /// Desarrollador: David
-    /// Proyecto: Biblioteca Ayuntamiento Vitoria-Gasteiz
+    /// Desarrollador: David Merchan
+    /// Proyecto: Biblioteca Vitoria Gasteiz
     /// </summary>
     public class PrestamoControlador
     {
@@ -50,9 +51,6 @@ namespace BibliotecaVitoriaGasteiz.controlador
         /// Si todo está correcto:
         /// - Inserto el préstamo en la tabla Prestamos
         /// - Marco el libro como NO disponible (Disponible = 0)
-        /// 
-        /// Aprendí de los apuntes de clase que es mejor validar TODO antes de modificar la BD,
-        /// así evito datos inconsistentes.
         /// </summary>
         public void RealizarPrestamo(Prestamo prestamo)
         {

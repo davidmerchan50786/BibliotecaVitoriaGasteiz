@@ -132,9 +132,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="vista\FormDetalleLibro.resx">
-      <DependentUpon>FormDetalleLibro.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="vista\FormLibros.resx">
       <DependentUpon>FormLibros.cs</DependentUpon>
     </EmbeddedResource>
