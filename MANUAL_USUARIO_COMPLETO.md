@@ -109,7 +109,7 @@ Este proyecto NO fue lineal. Fue un proceso caótico que involucró **tres versi
 - Usaba librerías que había descargado de GitHub (MaterialSkin, otros componentes)
 - Base de datos con estructura diferente
 
-**Decisión (mala):** "Lo voy a mezclar con el proyecto bueno a ver si sale algo"
+**Decisión (mala):** "Mezcle parte del repositorio de un proyecto con parte de otro que era un intento fallido sin darme cuenta e hize varios commits & push"
 
 ---
 
@@ -130,7 +130,7 @@ Este proyecto NO fue lineal. Fue un proceso caótico que involucró **tres versi
 - Helpers personalizados con nombres iguales pero código diferente
 ```
 
-**Resultado:** Conflictos de nombres, referencias rotas, dll hell.
+**Resultado:** Conflictos de nombres, referencias rotas, infierno dll.
 
 **2. Código fantasma:**
 - Métodos `modoEdicion` que ya no usaba
@@ -211,7 +211,7 @@ Intenté usar el `RepositorioLibros.cs` del repo antiguo con la BBDD del proyect
 - Diseño visual del Proyecto 1 (bonito)
 - Código limpio sin fantasmas
 
-**Qué boté:**
+**Qué eliminé:**
 - TODO el código del repo antiguo
 - Librerías externas innecesarias
 - Métodos duplicados o sin uso
@@ -862,7 +862,7 @@ private void panel_Paint(object sender, PaintEventArgs e)
 **Asignatura:** Desarrollo de Interfaces  
 **Profesora:** Maider Díaz Salinas  
 **GitHub:** [davidmerchan50786](https://github.com/davidmerchan50786)  
-**Correo:** (pendiente)
+**Correo:** david.merchan.50786@ikasle.egibide.org
 
 ---
 

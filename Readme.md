@@ -127,7 +127,7 @@ Intenté usar el `RepositorioLibros.cs` del repo antiguo con la BBDD del proyect
 - Diseño visual del Proyecto 1 (bonito)
 - Código limpio sin fantasmas
 
-**Qué boté:**
+**Qué tiré:**
 - TODO el código del repo antiguo
 - Librerías externas innecesarias
 - Métodos duplicados o sin uso
@@ -160,7 +160,7 @@ BibliotecaVitoriaGasteiz/
 │   │   ├── Libro.cs
 │   │   ├── Usuario.cs
 │   │   ├── Prestamo.cs
-│   │   ├── SQLiteHelper.cs       # Del profesor, namespace adaptado
+│   │   ├── SQLiteHelper.cs       # De ls profesora, namespace adaptado
 │   │   └── repositorio/          # Patrón Repository
 │   │       ├── RepositorioLibros.cs
 │   │       ├── RepositorioUsuarios.cs
@@ -175,7 +175,7 @@ BibliotecaVitoriaGasteiz/
 │   │   └── FormDetalleLibro.cs   # Vista/edición de libro
 │   └── helpers/
 │       └── UIHelper.cs           # Bordes redondeados, anti-aliasing
-└── Biblioteca.db                 # Base de datos SQLite
+└── Biblioteca.db                 # De la profesora, Base de datos SQLite
 ```
 
 ### Funcionalidades Implementadas
@@ -326,7 +326,7 @@ En FormPréstamos, los ComboBox preseleccionan el primer elemento por defecto. E
 
 Todo lo que usé está documentado en `DOSSIER_FUENTES.md`, pero aquí un resumen:
 
-### Código del Profesor (Base)
+### Código de Profesora (Base)
 - `SQLiteHelper.cs` con sus 4 métodos estáticos
 - PDF "Controles Personalizados"
 - PDF "SQLite"
@@ -343,8 +343,8 @@ Todo lo que usé está documentado en `DOSSIER_FUENTES.md`, pero aquí un resume
 
 ### Mis Propios Apuntes
 - Apuntes de "Programación" para la lógica de validación
-- Apuntes de "Interfaces de Usuario" para `FlowLayoutPanel`
-- Apuntes de "Bases de Datos Relacionales" para la estructura de tablas
+- Apuntes de "Diseño de Interfaces" para `FlowLayoutPanel`
+- Apuntes de "Bases de Datos y Acceso a datos" para la estructura de tablas
 
 ---
 
@@ -420,7 +420,7 @@ El manual completo está en `MANUAL_USUARIO.pdf`. Incluye:
 
 ### Personalmente
 - **El pánico no ayuda**: Subir las librerías al repo fue pánico. No resolvió nada real.
-- **El código limpio importa**: El "código fantasma" me costó horas de depuración.
+- **El código limpio importa**: El "código fantasma" me costó días de depuración.
 - **Documentar mientras programas vale oro**: Esta historia real la pude escribir porque fui anotando problemas.
 - **No mezcles dos versiones del mismo proyecto**: Hazlo bien la primera vez o acepta reescribir.
 
@@ -467,4 +467,4 @@ Este proyecto es un trabajo académico para Egibide - Centro de Arriaga (3º DAM
 
 **Nota final:** Este proyecto llegó tarde. Sí. Pero llegó completo, funcional, y con cada línea de código tocada, depurada y rehecha por mí. No es perfecto, pero es MÍO, y funciona de lujo.
 
-*Escrito en febrero de 2026, después de una semana intensa de código, café, y muy poco sueño.*
+*Escrito entre enero y febrero de 2026, y terminado después de una semana intensa de código, café, y muy poco sueño.*
